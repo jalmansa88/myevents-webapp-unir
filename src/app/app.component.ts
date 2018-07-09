@@ -1,4 +1,7 @@
 import { Component } from '@angular/core';
+import { AngularFirestore } from 'angularfire2/firestore';
+import { Observable } from 'rxjs';
+import { LoginService } from './services/login.service';
 
 @Component({
   selector: 'app-root',
@@ -6,5 +9,11 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'app';
+
+  user = {};
+
+  public items: Observable<any[]>;
+
+  constructor(public loginService: LoginService) {
+  }
 }

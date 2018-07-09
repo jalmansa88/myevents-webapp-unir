@@ -1,0 +1,81 @@
+<div class="input-group mb-3 container">
+    <button (click)="registerWithFb()" class="loginBtn loginBtn--facebook">
+        Registro con Facebook
+    </button>
+    <button (click)="showEmailRegisterForm()" class="loginBtn loginBtn--google">
+        Registro con eMail
+      </button>
+</div>
+
+<div *ngIf="showForm" class="col-md-12">
+    <h2>Formulario de registro con Email</h2>
+    <form name="form" (ngSubmit)="f.form.valid && registerWithEmail()" #f="ngForm" novalidate>
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text">Nombre</span>
+            </div>
+            <input type="text" class="form-control" name="firstname" [(ngModel)]="user.firstname" #firstname="ngModel" required pattern="^[a-zA-Z \-\']+" />
+            <div class="col-md-3">
+                <span *ngIf="(f.submitted || firstname.dirty) && !firstname.valid" class="badge badge-danger" role="alert">Nombre inválido</span>
+            </div>
+        </div>
+        <div class="input-group mb-3">
+            <div class="input-group-prepend form-valid">
+                <span class="input-group-text">Apellidos</span>
+            </div>
+            <input type="text" class="form-control" name="lastname" [(ngModel)]="user.lastname" #lastname="ngModel" required pattern="^[a-zA-Z \-\']+" />
+            <div class="col-md-3">
+                <span *ngIf="(f.submitted || lastname.dirty) && !lastname.valid" class="badge badge-danger">Al menos un apellido es obligatorio</span>
+            </div>
+        </div>
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text">Teléfono</span>
+            </div>
+            <input type="phone" class="form-control" name="phone" [(ngModel)]="user.phone" #phone="ngModel" required />
+            <div class="col-md-3">
+                <span *ngIf="(f.submitted || phone.dirty) && !phone.valid" class="badge badge-danger">El Teléfono es obligatorio</span>
+            </div>
+        </div>
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text">Email</span>
+            </div>
+            <input type="email" class="form-control" name="email" [(ngModel)]="user.email" #email="ngModel" required pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$" />
+            <div class="col-md-3">
+                <span *ngIf="(f.submitted || email.dirty) && !email.valid" class="badge badge-danger">Email inválido</span>
+            </div>
+        </div>
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text">Password</span>
+            </div>
+            <input type="password" class="form-control" name="password" [(ngModel)]="user.password" #password="ngModel" required minlength="6" />
+            <div class="col-md-3">
+                <span *ngIf="(f.submitted || password.dirty) && !password.valid" class="badge badge-danger">Deben ser al menos 6 caracteres</span>
+            </div>
+        </div>
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text">Repetir Password</span>
+            </div>
+            <input type="password" class="form-control" name="confirmPass" [(ngModel)]="confirmPass" #confirmPassword="ngModel" required minlength="6" />
+            <div class="col-md-3">
+                <span *ngIf="(f.submitted || confirmPassword.dirty) && confirmPassword.value !== password.value" class="badge badge-danger">¡Las contraseñas deben coincidir!</span>
+            </div>
+        </div>
+        <div class="form-group mb-3">
+            <button [disabled]="loading" class="btn btn-primary">Registro</button>
+            <img *ngIf="loading" src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA=="
+            />
+            <a [routerLink]="['home']" class="btn btn-link">Cancel</a>
+        </div>
+    </form>
+</div>
+<div class="input-group mb-3">
+    <div class="input-group-prepend">
+        <span class="input-group-text">Código de registro</span>
+    </div>
+    <input type="text" placeholder="P.Ejemplo E5G3D8" class="form-control" name="token" [(ngModel)]="token" #inputtoken="ngModel" required/>
+</div>
+<div *ngIf="inputtoken.dirty && !inputtoken.valid" class="alert alert-warning" role="alert">Introduzca un Código de registro válido. Consulte al Administrador del evento</div>
