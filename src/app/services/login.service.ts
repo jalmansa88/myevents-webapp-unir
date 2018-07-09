@@ -28,12 +28,6 @@ export class LoginService {
           email: fbUser.email,
           photoUrl: fbUser.photoURL,
         };
-
-        // this.db.collection('users').doc(fbUser.uid).valueChanges()
-        //   .subscribe((authUser: any) => {
-        //     this.user.level = authUser.level;
-        //     console.log(this.user);
-        //   });
       }
     });
    }
@@ -59,14 +53,6 @@ export class LoginService {
     this.afAuth.auth.fetchSignInMethodsForEmail('jalmansa88@gmail.com')
         .then(response => console.log('cool', response))
         .catch(err => console.error('email already registered', err));
-  }
-
-  checkToken(token: string) {
-    this.tokenService.findToken(token)
-      .subscribe((fbToken: any) => {
-        this.token.value = fbToken[0].value;
-        this.token.level = fbToken[0].level;
-    });
   }
 
   logout() {

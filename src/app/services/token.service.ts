@@ -9,7 +9,10 @@ export class TokenService {
 
   constructor(public db: AngularFirestore) {  }
 
-  findToken(tokenValueToFind: string): Observable<any> {
-    return this.db.collection('tokens', ref => ref.where('value', '==', tokenValueToFind).limit(1)).valueChanges();
+  findToken(tokenValueToFind: string): Promise<any> {
+    return new Promise((resolve, reject) => {
+      this.db.collection('tokens', ref => ref.where('value', '==', tokenValueToFind).limit(1)).valueChanges()
+        .subscribe(response => response.length !== 0 ? resolve(response[0]) : reject('invalid token') );
+    });
   }
 }

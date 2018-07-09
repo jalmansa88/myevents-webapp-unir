@@ -25,55 +25,23 @@ export class RegistrationComponent {
 
   constructor(private router: Router, private regService: RegistrationService, private tokenService: TokenService) { }
 
-  registerWithFb(token) {
+  registerWithFb() {
     this.showForm = false;
-    
-    this.checkToken()
-      .then((result) => {
-        this.fbToken = result;
-        this.regService.withFacebook();
-      }).catch((err) => {
-        console.error(err);
-        this.invalidToken = true;
-    });
+    this.regService.withFacebook(this.token, this.user);
   }
   
   registerWithEmail() {
-    this.checkToken()
-      .then((result) => {
-        this.fbToken = result;
-        this.makeEmailRegistration();
-      }).catch((err) => {
-        this.invalidToken = true;
-    });
-  }
-
-  makeEmailRegistration() {
-    this.regService.withEmail(this.user.email, this.user.password)
+    this.regService.withEmail(this.token, this.user)
       .then(response => { 
         this.successMsg = 'Registro satisfactorio';
         this.router.navigate(['home']);
-      }).catch(err => this.errMsg = err);
-  }
-
-  makeFbRegistration() {
-    
+      }).catch(err => {
+        this.errMsg = err;
+        this.invalidToken = true;
+      });
   }
 
   showEmailRegisterForm() {
     this.showForm = true;
-  }
-
-  checkToken(): Promise<any> {
-      return new Promise((resolve, reject) => {
-        this.tokenService.findToken(this.token)
-          .subscribe(response => {
-              if (response[0]) {
-                resolve(response[0]);
-              } else {
-                reject('invalid token');
-              }
-          });
-      });
   }
 }

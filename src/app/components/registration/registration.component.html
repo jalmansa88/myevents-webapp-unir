@@ -79,5 +79,5 @@
     <input type="text" placeholder="P.Ejemplo E5G3D8" class="form-control" name="inputtoken" [(ngModel)]="token" #inputtoken="ngModel" required/>
 </div>
 <div *ngIf="(inputtoken.dirty && !inputtoken.valid) || invalidToken" class="alert alert-warning" role="alert">Introduzca un Código de registro válido. Consulte al Administrador del evento</div>
-<div *ngIf="errMsg" class="alert alert-danger" role="alert">{{errMsg}}</div>
+<div *ngIf=" errMsg" class="alert alert-danger" role="alert">{{errMsg}}</div>
 <div *ngIf="successMsg" class="alert alert-success" role="alert">{{successMsg}}</div>

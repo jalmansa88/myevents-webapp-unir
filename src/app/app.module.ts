@@ -17,6 +17,7 @@ import { NavbarComponent } from './components/navbar/navbar.component';
 import { AboutComponent } from './components/about/about.component';
 import { RegistrationService } from './services/registration.service';
 import { EventsComponent } from './components/events/events.component';
+import { UserService } from './services/user.service';
 
 @NgModule({
   declarations: [
@@ -37,6 +38,7 @@ import { EventsComponent } from './components/events/events.component';
     AngularFireStorageModule
   ],
   providers: [
+    UserService,
     LoginService,
     RegistrationService,
     TokenService
