@@ -15,31 +15,25 @@ export class RegistrationService {
   constructor(
           private afAuth: AngularFireAuth,
           private tokenService: TokenService,
-          private db: AngularFirestore,
-          private router: Router) { }
+          private db: AngularFirestore) { }
 
 
-  withFacebook() {
-  
-    this.afAuth.auth.signInWithPopup(new auth.FacebookAuthProvider)
-      .then((data: any) => {
-        console.log(data);
-        this.router.navigate(['home']);
-          // this.db.collection('users').add({
-        //   uid: data.user.uid,
-        //   name: data.user.displayName,
-        //   email: data.user.email,
-        //   level: this.token.level
-        // });
-      });
+  withFacebook(): Promise<any> {
+      this.afAuth.auth.signInWithPopup(new auth.FacebookAuthProvider)
+        .then((data: any) => {
+            console.log(data);
+            
+              // this.db.collection('users').add({
+            //   uid: data.user.uid,
+            //   name: data.user.displayName,
+            //   email: data.user.email,
+            //   level: this.token.level
+            // });
+        });
   }
 
-  withEmail(email: string, password: string) {
-    // this.afAuth.auth.createUserWithEmailAndPassword('jalmansa88@gmail.com', '123457')
-    //   .catch(err => console.error('account in use', err.message));
-    this.afAuth.auth.fetchSignInMethodsForEmail('jalmansa88@gmail.com')
-        .then(response => console.log('cool', response))
-        .catch(err => console.error('email already registered', err));
+  withEmail(email: string, password: string): Promise<any> {
+    return this.afAuth.auth.createUserWithEmailAndPassword(email, password);
   }
 
   checkToken(token: string) {
@@ -48,5 +42,17 @@ export class RegistrationService {
         this.token.value = fbToken[0].value;
         this.token.level = fbToken[0].level;
     });
+  }
+
+  isEmailAlreadyRegistered(email: string) {
+    this.afAuth.auth.fetchSignInMethodsForEmail(email)
+        .then(response => {
+          if (response) {
+            return true;
+          } else {
+            return false;
+          }
+        })
+        .catch(err => console.error('an error occurred', err));
   }
 }

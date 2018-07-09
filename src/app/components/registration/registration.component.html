@@ -32,9 +32,9 @@
             <div class="input-group-prepend">
                 <span class="input-group-text">Teléfono</span>
             </div>
-            <input type="phone" class="form-control" name="phone" [(ngModel)]="user.phone" #phone="ngModel" required />
+            <input type="text" class="form-control" name="phone" [(ngModel)]="user.phone" #phone="ngModel" required pattern="^(\+34|0034|34)?[6|7|9][0-9]{8}$" />
             <div class="col-md-3">
-                <span *ngIf="(f.submitted || phone.dirty) && !phone.valid" class="badge badge-danger">El Teléfono es obligatorio</span>
+                <span *ngIf="(f.submitted || phone.dirty) && !phone.valid" class="badge badge-danger">Formato del Teléfono español incorrecto</span>
             </div>
         </div>
         <div class="input-group mb-3">
@@ -76,6 +76,8 @@
     <div class="input-group-prepend">
         <span class="input-group-text">Código de registro</span>
     </div>
-    <input type="text" placeholder="P.Ejemplo E5G3D8" class="form-control" name="token" [(ngModel)]="token" #inputtoken="ngModel" required/>
+    <input type="text" placeholder="P.Ejemplo E5G3D8" class="form-control" name="inputtoken" [(ngModel)]="token" #inputtoken="ngModel" required/>
 </div>
-<div *ngIf="inputtoken.dirty && !inputtoken.valid" class="alert alert-warning" role="alert">Introduzca un Código de registro válido. Consulte al Administrador del evento</div>
+<div *ngIf="(inputtoken.dirty && !inputtoken.valid) || invalidToken" class="alert alert-warning" role="alert">Introduzca un Código de registro válido. Consulte al Administrador del evento</div>
+<div *ngIf="errMsg" class="alert alert-danger" role="alert">{{errMsg}}</div>
+<div *ngIf="successMsg" class="alert alert-success" role="alert">{{successMsg}}</div>
