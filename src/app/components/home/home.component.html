@@ -1,10 +1,13 @@
-<div class="row">
-    <div class="col-md-12 text-center">
-        <h1>Login MyEvents</h1>
-        <button (click)="loginFacebook()" type="button" class="btn btn-primary">Login con Facebook</button>
-        <button (click)="loginEmail()" type="button" class="btn btn-info">Login con Email</button>
-        <div class="col-md-12">
-            ¿No tienes cuentas? <a [routerLink]="['/registration']">Regístrate</a>
-        </div>
-    </div>
+<h1 class="ml-3">Login MyEvents</h1>
+<button (click)="loginFacebook()" type="button" class="btn btn-primary">Login con Facebook</button>
+<button (click)="openEmailRegistrationForm()" type="button" class="btn btn-info ml-1">Login con Email</button>
+
+<app-login *ngIf="isLoginWithEmail"></app-login>
+
+<div class="mt-3">
+    ¿No tienes cuentas? <a [routerLink]="['/registration']">Regístrate</a>
+</div>
+<div *ngIf="errorMsg" class="alert alert-danger alert-dismissible" id="errorAlert">
+    <a class="close" data-dismiss="alert" aria-label="close">&times;</a>
+    <span>{{errorMsg}}</span>
 </div>

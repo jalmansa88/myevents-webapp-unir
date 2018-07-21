@@ -1,43 +1,77 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { User } from '../../interfaces/user.interface';
 import { Router } from '@angular/router';
 import { RegistrationService } from '../../services/registration.service';
+import { LoginService } from '../../services/login.service';
 import { NgForm } from '@angular/forms';
-import { TokenService } from '../../services/token.service';
+import { RoleRouterService } from '../../services/role-router.service';
 
 @Component({
   selector: 'app-registration',
   templateUrl: './registration.component.html',
   styleUrls: ['./registration.component.css']
 })
-export class RegistrationComponent {
+export class RegistrationComponent implements OnInit {
   
   user: User = {};
-  fbToken: any = {};
   token: string;
   showForm = false;
   loading = false;
-  confirmPass: string;
 
   invalidToken = false;
-  errMsg: string;
-  successMsg: string;
+  isError = false;
+  msg: string;
 
-  constructor(private router: Router, private regService: RegistrationService, private tokenService: TokenService) { }
+  constructor(private router: Router, 
+              private regService: RegistrationService, 
+              public loginService: LoginService,
+              public roleRouterService: RoleRouterService) { }
 
+
+  ngOnInit() {
+    if (this.loginService.user) {
+      this.roleRouterService.routeUser(this.loginService.user);
+    }
+  }
+              
   registerWithFb() {
     this.showForm = false;
-    this.regService.withFacebook(this.token, this.user);
+    this.loading = true;
+    this.isError = false;
+
+    if (! this.token) {
+      this.msg = 'Introduzca un Código de registro válido. Consulte al Administrador del evento';
+      this.isError = true;
+    }
+    
+    this.regService.withFacebook(this.token, this.user)
+      .then(success => {
+        console.log('exito', success);
+        this.msg = 'Registro satisfactorio';
+        this.router.navigate(['home']);
+      })
+      .catch(err => { 
+        if (err === 'invalid token') {
+          this.msg = 'Introduzca un Código de registro válido. Consulte al Administrador del evento';
+          this.isError = true;
+        }
+        console.error(err);
+      }
+    );
   }
   
   registerWithEmail() {
+    this.loading = true;
+    this.isError = false;
     this.regService.withEmail(this.token, this.user)
       .then(response => { 
-        this.successMsg = 'Registro satisfactorio';
+        this.msg = 'Registro satisfactorio';
+        this.loading = false;
         this.router.navigate(['home']);
       }).catch(err => {
-        this.errMsg = err;
-        this.invalidToken = true;
+        this.isError = true;
+        this.msg = err;
+        this.loading = false;
       });
   }
 

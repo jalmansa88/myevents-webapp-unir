@@ -16,8 +16,12 @@ import { RegistrationComponent } from './components/registration/registration.co
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { AboutComponent } from './components/about/about.component';
 import { RegistrationService } from './services/registration.service';
-import { EventsComponent } from './components/events/events.component';
 import { UserService } from './services/user.service';
+import { LoginComponent } from './components/login/login.component';
+import { ServiceProviderComponent } from './components/userPanels/service-provider/service-provider.component';
+import { EventAdminComponent } from './components/userPanels/event-admin/event-admin.component';
+import { EventsComponent } from './components/userPanels/events/events.component';
+import { RoleRouterService } from './services/role-router.service';
 
 @NgModule({
   declarations: [
@@ -26,7 +30,10 @@ import { UserService } from './services/user.service';
     RegistrationComponent,
     NavbarComponent,
     AboutComponent,
-    EventsComponent
+    EventsComponent,
+    LoginComponent,
+    ServiceProviderComponent,
+    EventAdminComponent
   ],
   imports: [
     APP_ROUTING,
@@ -41,7 +48,8 @@ import { UserService } from './services/user.service';
     UserService,
     LoginService,
     RegistrationService,
-    TokenService
+    TokenService,
+    RoleRouterService
   ],
   bootstrap: [AppComponent]
 })

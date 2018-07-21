@@ -1,4 +1,7 @@
-<div class="input-group mb-3 container">
+<div *ngIf="loginService.isLoggedIn()">
+    <div class="alert alert-success" role="alert">¡Ya estás logado!</div>
+</div>
+<div *ngIf="!loginService.isLoggedIn()" class="input-group mb-3 container">
     <button (click)="registerWithFb()" class="loginBtn loginBtn--facebook">
         Registro con Facebook
     </button>
@@ -59,7 +62,7 @@
             <div class="input-group-prepend">
                 <span class="input-group-text">Repetir Password</span>
             </div>
-            <input type="password" class="form-control" name="confirmPass" [(ngModel)]="confirmPass" #confirmPassword="ngModel" required minlength="6" />
+            <input type="password" class="form-control" name="confirmPass" ngModel #confirmPassword="ngModel" required minlength="6" />
             <div class="col-md-3">
                 <span *ngIf="(f.submitted || confirmPassword.dirty) && confirmPassword.value !== password.value" class="badge badge-danger">¡Las contraseñas deben coincidir!</span>
             </div>
@@ -72,12 +75,13 @@
         </div>
     </form>
 </div>
-<div class="input-group mb-3">
+<div *ngIf="!loginService.isLoggedIn()" class="input-group">
     <div class="input-group-prepend">
         <span class="input-group-text">Código de registro</span>
     </div>
-    <input type="text" placeholder="P.Ejemplo E5G3D8" class="form-control" name="inputtoken" [(ngModel)]="token" #inputtoken="ngModel" required/>
+    <input type="text" placeholder="P.Ejemplo: E5G3D8" class="form-control" name="inputtoken" [(ngModel)]="token" #inputtoken="ngModel" required/>
 </div>
-<div *ngIf="(inputtoken.dirty && !inputtoken.valid) || invalidToken" class="alert alert-warning" role="alert">Introduzca un Código de registro válido. Consulte al Administrador del evento</div>
-<div *ngIf=" errMsg" class="alert alert-danger" role="alert">{{errMsg}}</div>
-<div *ngIf="successMsg" class="alert alert-success" role="alert">{{successMsg}}</div>
+<div *ngIf="msg" [ngClass]="{'alert alert-dismissible': true, 'alert-danger': isError}">
+    <a class="close" data-dismiss="alert" aria-label="close">&times;</a>
+    <span>{{msg}}</span>
+</div>

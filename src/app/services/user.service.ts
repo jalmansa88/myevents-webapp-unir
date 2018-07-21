@@ -11,9 +11,13 @@ export class UserService {
   findUserByEmail(emailToFind: string): Promise<any> {
     return new Promise((resolve, reject) => {
       this.db.collection('users', ref => ref.where('email', '==', emailToFind).limit(1)).valueChanges()
-        .subscribe(response => { 
-          resolve(response);
-          reject('user not registered');
+
+      .subscribe(response => { 
+          if (response) {
+            resolve(response[0]);
+          } else {
+            reject('user not registered');
+          } 
         });
       });
     }

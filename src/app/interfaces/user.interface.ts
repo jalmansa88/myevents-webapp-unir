@@ -5,7 +5,7 @@ export interface User {
     email?: string;
     phone?: number;
     password?: string;
-    level?: number;
+    role?: number;
     events?: string[];
     photoUrl?: string;
 }
