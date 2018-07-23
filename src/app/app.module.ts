@@ -1,6 +1,7 @@
 import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+import { HttpClientModule } from '@angular/common/http';
 
 import { AppComponent } from './app.component';
 import { AngularFireModule } from 'angularfire2';
@@ -22,23 +23,25 @@ import { ServiceProviderComponent } from './components/userPanels/service-provid
 import { EventAdminComponent } from './components/userPanels/event-admin/event-admin.component';
 import { EventsComponent } from './components/userPanels/events/events.component';
 import { RoleRouterService } from './services/role-router.service';
+import { EventsService } from './services/events.service';
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
-    RegistrationComponent,
-    NavbarComponent,
     AboutComponent,
-    EventsComponent,
     LoginComponent,
-    ServiceProviderComponent,
-    EventAdminComponent
+    EventsComponent,
+    NavbarComponent,
+    EventAdminComponent,
+    RegistrationComponent,
+    ServiceProviderComponent
   ],
   imports: [
     APP_ROUTING,
     FormsModule,
     BrowserModule,
+    HttpClientModule,
     AngularFireModule.initializeApp(environment.firebase),
     AngularFirestoreModule,
     AngularFireAuthModule,
@@ -46,10 +49,11 @@ import { RoleRouterService } from './services/role-router.service';
   ],
   providers: [
     UserService,
-    LoginService,
-    RegistrationService,
     TokenService,
-    RoleRouterService
+    LoginService,
+    EventsService,
+    RoleRouterService,
+    RegistrationService
   ],
   bootstrap: [AppComponent]
 })

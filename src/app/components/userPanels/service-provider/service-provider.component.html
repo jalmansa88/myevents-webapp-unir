@@ -1,3 +1,21 @@
-<p>
-  service-provider works!
-</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">#ID</th>
+            <th scope="col">Event Name</th>
+            <th scope="col">Event Description</th>
+            <th scope="col">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let event of events">
+            <th scope="row">{{event.uid}}</th>
+            <td>{{event.name}}</td>
+            <td>{{event.description}}</td>
+            <td>
+                <button (click)="generateToken(event)" class="btn btn-outline-primary">Generar Token</button>
+                <span>{{event.token}}</span>
+            </td>
+        </tr>
+    </tbody>
+</table>
