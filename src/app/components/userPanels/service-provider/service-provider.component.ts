@@ -35,25 +35,24 @@ export class ServiceProviderComponent implements OnInit {
       }))
       .subscribe((result: any) => {
         this.events = result;
-    });
-  }
-
-  generateToken(event: any) {
-    // ROLE 3 is a Event Administrator.
-    this.tokenService.generate(event.uid, 3)
-      .then((result: any) => {
-        event.token = result.token;
-      })
-      .catch((err) => {
-        console.error(err);
-    });
-  }
-
-  mapToEvent = doc => {
-    const event = doc.payload.doc.data();
-    event.uid = doc.payload.doc.id;
-
-    return event;
-  }
-
+      });
+    }
+    
+    mapToEvent = doc => {
+      const event = doc.payload.doc.data();
+      event.uid = doc.payload.doc.id;
+      
+      return event;
+    }
+    
+    generateToken(event: any) {
+      // ROLE 3 is a Event Administrator.
+      this.tokenService.generate(event.uid, 3)
+        .then((result: any) => {
+          event.token = result.token;
+        })
+        .catch((err) => {
+          console.error(err);
+      });
+    }
 }
