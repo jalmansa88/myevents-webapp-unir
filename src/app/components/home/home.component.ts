@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { LoginService } from '../../services/login.service';
-import { Router } from '@angular/router';
 import { RoleRouterService } from '../../services/role-router.service';
 
 declare var $;
