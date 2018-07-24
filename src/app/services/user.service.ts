@@ -18,7 +18,21 @@ export class UserService {
           } else {
             reject('user not registered');
           } 
-        });
       });
-    }
+    });
+  }
+
+  findByEvent(eventId: string): Promise<any> {
+    return new Promise((resolve, reject) => {
+      this.db.collection('users', ref => ref.where('events', '==', eventId)).valueChanges()
+        .subscribe(response => {
+          
+          if (response) {
+            return resolve(response);
+          
+          }
+          return reject('error finding event by id');
+      });
+    });
+  }
 }

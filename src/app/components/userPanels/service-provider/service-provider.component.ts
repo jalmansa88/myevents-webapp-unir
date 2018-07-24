@@ -12,14 +12,16 @@ import { TokenService } from '../../../services/token.service';
   styleUrls: ['./service-provider.component.css']
 })
 export class ServiceProviderComponent implements OnInit {
-
+  
   user: User;
   events: any[];
+
 
   constructor(private loginService: LoginService,
               private eventService: EventsService,
               private tokenService: TokenService,
               private router: Router) {
+  
 
   this.user = this.loginService.user;
   }
@@ -30,26 +32,16 @@ export class ServiceProviderComponent implements OnInit {
     // }
     
     this.eventService.getAll()
-      .pipe(map((snapshot: any) => {
-        return snapshot.map(this.mapToEvent);
-      }))
       .subscribe((result: any) => {
         this.events = result;
       });
-    }
-    
-    mapToEvent = doc => {
-      const event = doc.payload.doc.data();
-      event.uid = doc.payload.doc.id;
-      
-      return event;
     }
     
     generateToken(event: any) {
       // ROLE 3 is a Event Administrator.
       this.tokenService.generate(event.uid, 3)
         .then((result: any) => {
-          event.token = result.token;
+          event.tokenvalue = result.token;
         })
         .catch((err) => {
           console.error(err);

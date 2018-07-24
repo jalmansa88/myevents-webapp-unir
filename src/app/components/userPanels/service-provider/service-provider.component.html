@@ -1,10 +1,11 @@
+<h1 class="text-center text-primary"><strong>Service Provider Dashboard</strong></h1>
 <table class="table">
     <thead>
         <tr>
-            <th scope="col">#ID</th>
+            <th scope="col">#UID</th>
             <th scope="col">Event Name</th>
             <th scope="col">Event Description</th>
-            <th scope="col">Actions</th>
+            <th scope="col">Gernerate Registration AdminEvent Token</th>
         </tr>
     </thead>
     <tbody>
@@ -12,9 +13,9 @@
             <th scope="row">{{event.uid}}</th>
             <td>{{event.name}}</td>
             <td>{{event.description}}</td>
-            <td>
-                <button (click)="generateToken(event)" class="btn btn-outline-primary">Generar Token</button>
-                <span>{{event.token}}</span>
+            <td class="input-group">
+                <input value="{{event.tokenvalue}}" type="text" readonly>
+                <button (click)="generateToken(event)" class="btn btn-outline-primary">New Token</button>
             </td>
         </tr>
     </tbody>

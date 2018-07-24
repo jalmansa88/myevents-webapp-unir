@@ -24,6 +24,7 @@ import { EventAdminComponent } from './components/userPanels/event-admin/event-a
 import { EventsComponent } from './components/userPanels/events/events.component';
 import { RoleRouterService } from './services/role-router.service';
 import { EventsService } from './services/events.service';
+import { UsersEventsComponent } from './components/users-events/users-events.component';
 
 @NgModule({
   declarations: [
@@ -35,7 +36,8 @@ import { EventsService } from './services/events.service';
     NavbarComponent,
     EventAdminComponent,
     RegistrationComponent,
-    ServiceProviderComponent
+    ServiceProviderComponent,
+    UsersEventsComponent
   ],
   imports: [
     APP_ROUTING,

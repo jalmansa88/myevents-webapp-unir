@@ -1,0 +1,22 @@
+<h3 class="text-center text-primary">User List</h3>
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">Name</th>
+            <th scope="col">eMail</th>
+            <th scope="col">Role Level</th>
+            <th scope="col">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let user of users">
+            <th scope="row">{{user.name}}</th>
+            <td>{{user.email}}</td>
+            <td>{{user.role}}</td>
+            <td class="btn-group">
+                <button (click)="update(event)" class="btn btn-warning">Update</button>
+                <button (click)="delete(user)" class="btn btn-danger">Delete</button>
+            </td>
+        </tr>
+    </tbody>
+</table>

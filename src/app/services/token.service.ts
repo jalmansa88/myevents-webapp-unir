@@ -21,15 +21,14 @@ export class TokenService {
     const baseUrl = 'https://us-central1-myevents-unir.cloudfunctions.net/api/token';
 
     return new Promise((resolve, reject) => {
-      if (role < 1 || role > 4) {
-        reject('not a valid role');
+      if (role < 0 || role > 4) {
+        return reject('not a valid role');
       }
 
       let params = new HttpParams();
 
       params = params.set('eventid', eventId);
       params = params.set('role', String(role));
-      console.log('calling to token api');
       
       resolve(this.http.get(baseUrl, { params: params }).toPromise());
     });
