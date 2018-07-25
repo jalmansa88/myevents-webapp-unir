@@ -17,7 +17,13 @@ export class EventsService {
     );
   }
 
+  save(event: any) {
+    return this.db.collection('events').add(event);
+  }
+
   findByUid(uid: string) {
+    console.log(uid);
+    
     return this.db.collection('events').doc(uid).snapshotChanges()
       .pipe(map((snapshot: any) => {
         const event = snapshot.payload.data();

@@ -26,7 +26,7 @@
         </div>
     </form>
 </div>
-<div class="list">
-    <div *ngIf="errMsg" class="alert alert-danger" role="alert">{{errMsg}}</div>
-    <div *ngIf="successMsg" class="alert alert-success" role="alert">{{successMsg}}</div>
+<div *ngIf="msg" [ngClass]="{'alert alert-dismissible': true, 'alert-success': !isError, 'alert-danger': isError}">
+    <a class="close" data-dismiss="alert" aria-label="close">&times;</a>
+    <span>{{msg}}</span>
 </div>

@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { User } from '../../../interfaces/user.interface';
 import { LoginService } from '../../../services/login.service';
 import { Router } from '@angular/router';
-import { RoleRouterService } from '../../../services/role-router.service';
 import { TokenService } from '../../../services/token.service';
 import { EventsService } from '../../../services/events.service';
 
@@ -36,19 +35,17 @@ export class EventAdminComponent implements OnInit {
 ];
 
   constructor(private loginService: LoginService,
-              private roleRouterService: RoleRouterService,
               private tokenService: TokenService,
               private router: Router,
               private eventsService: EventsService) {
   
     this.user = this.loginService.user;
+
+    if (!this.user) {
+      this.router.navigate(['home']);
+    }
     
-    // this.eventsService.findByUid(this.user.events[0]);
-    // if (!this.user) {
-    //   this.router.navigate(['home']);
-    // }
-      
-    this.eventsService.findByUid('HHclAlrIOeZizcEkTD4Z')
+    this.eventsService.findByUid(this.user.events)
       .subscribe(result => {
           result.tokenrole = this.roles[0].level;
           

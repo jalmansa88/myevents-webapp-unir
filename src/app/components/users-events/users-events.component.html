@@ -6,17 +6,22 @@
             <th scope="col">eMail</th>
             <th scope="col">Role Level</th>
             <th scope="col">Actions</th>
+            <th scope="col"></th>
         </tr>
     </thead>
     <tbody>
-        <tr *ngFor="let user of users">
-            <th scope="row">{{user.name}}</th>
-            <td>{{user.email}}</td>
+        <tr *ngFor="let user of users; let i = index">
+            <td><input [(ngModel)]="user.name" [value]="user.name"></td>
+            <td><input [(ngModel)]="user.email" [value]="user.email"></td>
             <td>{{user.role}}</td>
             <td class="btn-group">
-                <button (click)="update(event)" class="btn btn-warning">Update</button>
-                <button (click)="delete(user)" class="btn btn-danger">Delete</button>
+                <button (click)="update(user)" class="btn btn-warning">Update</button>
+                <button (click)="delete(i)" class="btn btn-danger">Delete</button>
             </td>
         </tr>
     </tbody>
 </table>
+<div *ngIf="msg" [ngClass]="{'alert alert-dismissible': true, 'alert-danger': isError, 'alert-success': !isError}">
+    <a class="close" (click)="msg = ''">&times;</a>
+    <span>{{msg}}</span>
+</div>

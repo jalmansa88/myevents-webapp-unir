@@ -73,25 +73,31 @@ export class RegistrationService {
     return this.tokenService.findToken(formToken)
         .then((tokenResult) => {
           this.token.value = tokenResult.value;
-          this.token.role = tokenResult.rolel;
+          this.token.role = tokenResult.role;
+          this.token.eventId = tokenResult.eventId;
         })
         .then(() => {
           return this.afAuth.auth.createUserWithEmailAndPassword(user.email, user.password);
         })
         .then((authResult) => {
-            this.db.collection('users').add({
+          console.log('saving into db');
+          
+            return this.db.collection('users').add({
               uid: authResult.user.uid,
               firstname: user.firstname,
               lastname: user.lastname,
               email: user.email,
               phone: user.phone,
-              role: this.token.role
+              role: this.token.role,
+              events: this.token.eventId
               // TODO: link con el evento
             });
         })
         .then(() => {
-            this.afAuth.auth.signOut();
+          console.log('loggin out');
+            return this.afAuth.auth.signOut();
         })
+        .then(() => Promise.resolve('success'))
         .catch(err => {
           return Promise.reject(err);
         });

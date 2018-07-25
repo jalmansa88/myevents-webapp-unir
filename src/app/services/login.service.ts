@@ -24,6 +24,8 @@ export class LoginService {
         return this.userService.findUserByEmail(authUser.user.email);
       })
       .then((user) => {
+        console.log(user);
+        
         if (!user) {
           throw 'account not registered';
         }
@@ -41,7 +43,17 @@ export class LoginService {
   }
 
   loginEmail(email: string, password: string) {
-    return this.afAuth.auth.signInWithEmailAndPassword(email, password);
+    return this.afAuth.auth.signInWithEmailAndPassword(email, password)
+      .then((authUser) => {
+        return this.userService.findUserByEmail(authUser.user.email);
+      })
+      .then((result) => {
+        this.user = result;
+        return this.user;
+      })
+      .catch((err) => {
+        console.error(err);
+      });
   }
 
   logout() {

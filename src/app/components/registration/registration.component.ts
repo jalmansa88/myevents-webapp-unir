@@ -64,11 +64,15 @@ export class RegistrationComponent implements OnInit {
     this.loading = true;
     this.isError = false;
     this.regService.withEmail(this.token, this.user)
-      .then(response => { 
+      .then(response => {
+        console.log(response);
+        
         this.msg = 'Registro satisfactorio';
         this.loading = false;
         this.router.navigate(['home']);
       }).catch(err => {
+        console.error(err);
+        
         this.isError = true;
         this.msg = err;
         this.loading = false;

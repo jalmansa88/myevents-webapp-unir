@@ -8,7 +8,7 @@ import { User } from '../interfaces/user.interface';
 export class RoleRouterService {
 
   constructor(private router: Router) { }
-
+  
   routeUser(user: User) {
     console.log('enrutando', user);
     

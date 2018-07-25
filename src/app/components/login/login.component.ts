@@ -2,6 +2,7 @@ import { Component, ViewChild } from '@angular/core';
 import { LoginService } from '../../services/login.service';
 import { NgForm } from '@angular/forms';
 import { RoleRouterService } from '../../services/role-router.service';
+import { User } from '../../interfaces/user.interface';
 
 @Component({
   selector: 'app-login',
@@ -15,9 +16,9 @@ export class LoginComponent {
 
   email: string;
   password: string;
+  msg: string;
+  isError = false;
   loading = false;
-  errMsg: string;
-  successMsg: string;
 
   constructor(public loginService: LoginService,
               private userRouter: RoleRouterService) { }
@@ -25,18 +26,23 @@ export class LoginComponent {
   loginWithEmail() {
     this.loading = true;
     this.loginService.loginEmail(this.email, this.password)
-      .then((result) => {
+      .then((user: User) => {
+          console.log(user);
+          
           this.loading = false;
-          this.successMsg = 'success login';
-          this.userRouter.routeUser(this.loginService.user);
+          this.isError = false;
+          this.msg = 'success login';
+          this.userRouter.routeUser(user);
       }).catch((err) => { 
           this.loading = false;
-          this.errMsg = err;
+          this.isError = true;
+          this.msg = err;
       });
   }
 
   resetForm() {
-    this.errMsg = null;
+    this.msg = null;
+    this.isError = false;
     this.form.resetForm();
   }
 

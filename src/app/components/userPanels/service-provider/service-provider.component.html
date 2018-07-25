@@ -2,21 +2,21 @@
 <table class="table">
     <thead>
         <tr>
-            <th scope="col">#UID</th>
             <th scope="col">Event Name</th>
             <th scope="col">Event Description</th>
-            <th scope="col">Gernerate Registration AdminEvent Token</th>
+            <th scope="col">Registration AdminEvent Token</th>
         </tr>
     </thead>
     <tbody>
         <tr *ngFor="let event of events">
-            <th scope="row">{{event.uid}}</th>
-            <td>{{event.name}}</td>
-            <td>{{event.description}}</td>
-            <td class="input-group">
+            <td><input [ngClass]="{'col-sm mw-100': true, 'border-0': !event.isNew}" [(ngModel)]="event.name" [value]="event.name" [readonly]="!event.isNew"></td>
+            <td><input [ngClass]="{'col-sm mw-100': true, 'border-0': !event.isNew}" [(ngModel)]="event.description" [value]="event.description" [readonly]="!event.isNew"></td>
+            <td class="input-group" *ngIf="!event.isNew">
                 <input value="{{event.tokenvalue}}" type="text" readonly>
                 <button (click)="generateToken(event)" class="btn btn-outline-primary">New Token</button>
             </td>
+            <td *ngIf="event.isNew"><button (click)="saveEvent(event)" class="btn btn-success">Save</button></td>
         </tr>
     </tbody>
+    <button (click)="newEvent()" type="button" class="btn btn-outline-dark">New Event</button>
 </table>
