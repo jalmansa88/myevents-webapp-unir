@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { LoginService } from '../../../services/login.service';
+
 import { User } from '../../../interfaces/user.interface';
+import { EventsService } from '../../../services/events.service';
+import { LoginService } from '../../../services/login.service';
 
 @Component({
   selector: 'app-events',
@@ -9,12 +11,14 @@ import { User } from '../../../interfaces/user.interface';
   styleUrls: ['./events.component.css']
 })
 export class EventsComponent implements OnInit {
-  
   user: User;
+  events: any[];
 
-  constructor(private loginService: LoginService,
-              private router: Router) {
-  
+  constructor(
+    private loginService: LoginService,
+    private router: Router,
+    private eventService: EventsService
+  ) {
     this.user = this.loginService.user;
   }
 
@@ -22,8 +26,15 @@ export class EventsComponent implements OnInit {
     // if (!this.user) {
     //   this.router.navigate(['home']);
     // }
-
-    
+    this.eventService
+      .findByUserUid('yiABYcxALxkcT2w3KpOz')
+      .then(result => {
+        console.log(result);
+      })
+      .catch(err => {
+        console.error(err);
+      });
   }
-  
+
+  goToEventBoard(event_uid: string) {}
 }

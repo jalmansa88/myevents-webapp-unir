@@ -6,15 +6,17 @@ import { map } from 'rxjs/operators';
   providedIn: 'root'
 })
 export class EventsService {
-
-  constructor(private db: AngularFirestore) { }
+  constructor(private db: AngularFirestore) {}
 
   getAll() {
-    return this.db.collection('events').snapshotChanges()
-      .pipe(map((snapshot: any) => {
-        return snapshot.map(this.mapToEvent);
-      })
-    );
+    return this.db
+      .collection('events')
+      .snapshotChanges()
+      .pipe(
+        map((snapshot: any) => {
+          return snapshot.map(this.mapToEvent);
+        })
+      );
   }
 
   save(event: any) {
@@ -22,20 +24,44 @@ export class EventsService {
   }
 
   findByUid(uid: string) {
-    console.log(uid);
-    
-    return this.db.collection('events').doc(uid).snapshotChanges()
-      .pipe(map((snapshot: any) => {
-        const event = snapshot.payload.data();
-        event.uid = snapshot.payload.id;
-        return event;
-    }));
+    return this.db
+      .collection('events')
+      .doc(uid)
+      .snapshotChanges()
+      .pipe(
+        map((snapshot: any) => {
+          const event = snapshot.payload.data();
+          event.uid = snapshot.payload.id;
+          return event;
+        })
+      );
   }
 
   mapToEvent = doc => {
     const event = doc.payload.doc.data();
     event.uid = doc.payload.doc.id;
-    
+
     return event;
+  };
+
+  findByUserUid(user_uid: string) {
+    const events: any[] = [];
+    return new Promise((resolve, reject) => {
+      this.db
+        .collection('attendees', ref => ref.where('user_uid', '==', user_uid))
+        .snapshotChanges()
+        .subscribe((attendeesSnaps: any) => {
+          attendeesSnaps.forEach((attendeeSnapshot: any) => {
+            this.db
+              .collection('events')
+              .doc(attendeeSnapshot.payload.doc.data().event_uid)
+              .valueChanges()
+              .subscribe(event => {
+                events.push(event);
+              });
+          });
+        });
+      resolve(events);
+    });
   }
 }
