@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+
 import { User } from '../../../interfaces/user.interface';
-import { LoginService } from '../../../services/login.service';
-import { Router } from '@angular/router';
-import { TokenService } from '../../../services/token.service';
 import { EventsService } from '../../../services/events.service';
+import { LoginService } from '../../../services/login.service';
+import { TokenService } from '../../../services/token.service';
 
 @Component({
   selector: 'app-event-admin',
@@ -11,11 +12,7 @@ import { EventsService } from '../../../services/events.service';
   styleUrls: ['./event-admin.component.css']
 })
 export class EventAdminComponent implements OnInit {
-  
-  // TODO: make it string
-  events: any[] = [];
-  isEventLoaded = false;
-
+  event: any;
   user: User;
   token: string;
   // TODO: move to DB
@@ -32,46 +29,47 @@ export class EventAdminComponent implements OnInit {
       name: 'VIP',
       level: 2
     }
-];
+  ];
 
-  constructor(private loginService: LoginService,
-              private tokenService: TokenService,
-              private router: Router,
-              private eventsService: EventsService) {
-  
-    this.user = this.loginService.user;
-
-    if (!this.user) {
-      this.router.navigate(['home']);
-    }
-    
-    this.eventsService.findByUid(this.user.events)
-      .subscribe(result => {
-          result.tokenrole = this.roles[0].level;
-          
-          this.events.push(result);
-          this.isEventLoaded = true;
-      });
-  }
+  constructor(
+    private router: Router,
+    private loginService: LoginService,
+    private tokenService: TokenService,
+    private eventsService: EventsService,
+    private activatedRoute: ActivatedRoute
+  ) {}
 
   ngOnInit() {
-    
-  }
-  
-  generateToken(eventId: string, role: number) {
-    console.log('event id', eventId);
-    console.log('role', role);
-    
+    this.user = this.loginService.user;
 
-    this.tokenService.generate(eventId, role)
-      .then((result: any) => {
-        console.log('token', result);
-        
-        this.token = result.token;
-      })
-      .catch((err) => {
-        console.error(err);
+    // if (!this.user) {
+    //   this.router.navigate(['home']);
+    // }
+    this.activatedRoute.params.subscribe(params => {
+      this.eventsService.findByUid(params.uid).subscribe(result => {
+        result.tokenrole = this.roles[0].level;
+
+        this.event = result;
+      });
     });
   }
 
+  generateToken(event: any) {
+    console.log('event id', event.uid);
+    console.log('role', event.tokenrole);
+    event.loading = true;
+
+    this.tokenService
+      .generate(event.uid, event.tokenrole)
+      .then((result: any) => {
+        console.log('token', result);
+        delete event.loading;
+
+        this.token = result.token;
+      })
+      .catch(err => {
+        delete event.loading;
+        console.error(err);
+      });
+  }
 }

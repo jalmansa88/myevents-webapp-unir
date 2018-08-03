@@ -1,4 +1,6 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+
+import { User } from '../../interfaces/user.interface';
 import { UserService } from '../../services/user.service';
 
 @Component({
@@ -7,42 +9,46 @@ import { UserService } from '../../services/user.service';
   styleUrls: ['./users-events.component.css']
 })
 export class UsersEventsComponent implements OnInit {
-  
   @Input() eventId: string;
 
-  users: any[] = [];
+  users: User[] = [];
   msg: string;
   isError = false;
 
-  constructor(private userService: UserService) { }
+  constructor(private userService: UserService) {}
 
   ngOnInit() {
-    this.userService.findByEvent(this.eventId)
-      .then((result) => {
+    this.userService
+      .findByEventUid(this.eventId)
+      .then((result: User[]) => {
         this.users = result;
-      }).catch((err) => {
+      })
+      .catch(err => {
         this.onError('Error buscando usuarios para este evento: ' + err);
       });
   }
 
-  update(user: any) {
-    return this.userService.update(user)
-        .then((result) => {
-          this.onSuccess('Usuario actualizado correctamente');
-        }).catch((err) => {
-          this.onError(err);
-        });
+  update(user: User) {
+    return this.userService
+      .update(user)
+      .then(result => {
+        this.onSuccess('Usuario actualizado correctamente');
+      })
+      .catch(err => {
+        this.onError(err);
+      });
   }
 
   delete(i: number) {
-    return this.userService.delete(this.users[i].uid)
-        .then((result) => {
-          this.onSuccess('Usuario eliminado del evento correctamente');
-          this.users.splice(i, 1);
-          
-        }).catch((err) => {
-          this.onError('Error borrando user: ' + err);
-        });
+    return this.userService
+      .delete(this.users[i].uid)
+      .then(result => {
+        this.onSuccess('Usuario eliminado del evento correctamente');
+        this.users.splice(i, 1);
+      })
+      .catch(err => {
+        this.onError('Error borrando user: ' + err);
+      });
   }
 
   onSuccess(msg: string) {
@@ -54,5 +60,4 @@ export class UsersEventsComponent implements OnInit {
     this.isError = true;
     this.msg = msg;
   }
-
 }

@@ -56,7 +56,8 @@ export class EventsService {
               .collection('events')
               .doc(attendeeSnapshot.payload.doc.data().event_uid)
               .valueChanges()
-              .subscribe(event => {
+              .subscribe((event: any) => {
+                event.uid = attendeeSnapshot.payload.doc.data().event_uid;
                 events.push(event);
               });
           });

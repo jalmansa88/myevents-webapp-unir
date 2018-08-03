@@ -27,14 +27,15 @@ export class EventsComponent implements OnInit {
     //   this.router.navigate(['home']);
     // }
     this.eventService
-      .findByUserUid('yiABYcxALxkcT2w3KpOz')
-      .then(result => {
+      .findByUserUid(this.user.uid)
+      // .findByUserUid('yiABYcxALxkcT2w3KpOz')
+      .then((result: any[]) => {
         console.log(result);
+
+        this.events = result;
       })
       .catch(err => {
         console.error(err);
       });
   }
-
-  goToEventBoard(event_uid: string) {}
 }

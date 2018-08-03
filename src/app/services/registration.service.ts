@@ -58,15 +58,21 @@ export class RegistrationService {
   saveAccountInDBIfNotExist(userInDb: any): Promise<any> {
     return new Promise<any>((accept, reject) => {
       if (!userInDb) {
-        return this.db.collection('users').add({
-          // uid: this.authData.user.uid,
-          firstname: this.authData.user.displayName,
-          lastname: '',
-          email: this.authData.user.email,
-          phone: 0,
-          role: this.token.role,
-          events: this.token.eventId
-        });
+        return this.db
+          .collection('users')
+          .add({
+            firstname: this.authData.additionalUserInfo.profile.first_name,
+            lastname: this.authData.additionalUserInfo.profile.last_name,
+            email: this.authData.additionalUserInfo.profile.email,
+            phone: this.authData.user.phonNumber
+              ? this.authData.user.phonNumber
+              : '',
+            role: this.token.role
+            // events: this.token.eventId
+          })
+          .then(saveResponse => {
+            console.log('saveresponse', saveResponse);
+          });
       } else {
         reject('email was already registered');
       }
@@ -88,26 +94,32 @@ export class RegistrationService {
         );
       })
       .then(authResult => {
-        console.log('saving into db');
-
         return this.db.collection('users').add({
-          uid: authResult.user.uid,
           firstname: user.firstname,
           lastname: user.lastname,
           email: user.email,
           phone: user.phone,
-          role: this.token.role,
-          events: this.token.eventId
-          // TODO: link con el evento
+          role: this.token.role
+          // events: this.token.eventId
         });
       })
+      .then(saveResponse => {
+        console.log('saveresponse email', saveResponse);
+        this.saveAttendee(saveResponse);
+      })
       .then(() => {
-        console.log('loggin out');
         return this.afAuth.auth.signOut();
       })
       .then(() => Promise.resolve('success'))
       .catch(err => {
         return Promise.reject(err);
       });
+  }
+
+  saveAttendee(data: any) {
+    this.db.collection('attendees').add({
+      user_uid: data.id,
+      event_uid: this.token.eventId
+    });
   }
 }
