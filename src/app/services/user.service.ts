@@ -9,6 +9,10 @@ import { User } from '../interfaces/user.interface';
 export class UserService {
   constructor(private db: AngularFirestore) {}
 
+  findByUid(uid: string) {
+    return this.db.collection('users').doc(uid);
+  }
+
   findUserByEmail(emailToFind: string): Promise<any> {
     return new Promise((resolve, reject) => {
       this.db

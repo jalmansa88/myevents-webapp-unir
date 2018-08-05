@@ -44,18 +44,20 @@ export class LoginService {
   }
 
   loginEmail(email: string, password: string) {
-    return this.afAuth.auth
-      .signInWithEmailAndPassword(email, password)
-      .then(authUser => {
-        return this.userService.findUserByEmail(authUser.user.email);
-      })
-      .then(result => {
-        this.user = result;
-        return this.user;
-      })
-      .catch(err => {
-        console.error(err);
-      });
+    return new Promise((resolve, reject) => {
+      this.afAuth.auth
+        .signInWithEmailAndPassword(email, password)
+        .then(authUser => {
+          return this.userService.findUserByEmail(authUser.user.email);
+        })
+        .then(result => {
+          this.user = result;
+          resolve(this.user);
+        })
+        .catch(err => {
+          reject(err);
+        });
+    });
   }
 
   logout() {

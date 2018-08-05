@@ -4,6 +4,7 @@ import { AngularFirestore } from 'angularfire2/firestore';
 import { auth } from 'firebase';
 
 import { User } from '../interfaces/user.interface';
+import { EventsService } from './events.service';
 import { TokenService } from './token.service';
 import { UserService } from './user.service';
 
@@ -18,7 +19,8 @@ export class RegistrationService {
     private afAuth: AngularFireAuth,
     private tokenService: TokenService,
     private db: AngularFirestore,
-    private userService: UserService
+    private userService: UserService,
+    private eventsService: EventsService
   ) {}
 
   withFacebook(formToken: string, user: any): Promise<any> {
@@ -42,6 +44,13 @@ export class RegistrationService {
         })
         .then(userInDb => {
           return this.saveAccountInDBIfNotExist(userInDb);
+        })
+        .then(saveResponse => {
+          console.log('saveresponse facebook', saveResponse);
+          this.eventsService.addAttendeeToEvent(
+            saveResponse.id,
+            this.token.eventId
+          );
         })
         .then(() => {
           resolve('Registro satisfactorio');
@@ -68,7 +77,6 @@ export class RegistrationService {
               ? this.authData.user.phonNumber
               : '',
             role: this.token.role
-            // events: this.token.eventId
           })
           .then(saveResponse => {
             console.log('saveresponse', saveResponse);
@@ -93,19 +101,21 @@ export class RegistrationService {
           user.password
         );
       })
-      .then(authResult => {
+      .then(() => {
         return this.db.collection('users').add({
           firstname: user.firstname,
           lastname: user.lastname,
           email: user.email,
           phone: user.phone,
           role: this.token.role
-          // events: this.token.eventId
         });
       })
       .then(saveResponse => {
         console.log('saveresponse email', saveResponse);
-        this.saveAttendee(saveResponse);
+        this.eventsService.addAttendeeToEvent(
+          saveResponse.id,
+          this.token.eventId
+        );
       })
       .then(() => {
         return this.afAuth.auth.signOut();
@@ -114,12 +124,5 @@ export class RegistrationService {
       .catch(err => {
         return Promise.reject(err);
       });
-  }
-
-  saveAttendee(data: any) {
-    this.db.collection('attendees').add({
-      user_uid: data.id,
-      event_uid: this.token.eventId
-    });
   }
 }

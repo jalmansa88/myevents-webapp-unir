@@ -1,8 +1,9 @@
 import { Component, ViewChild } from '@angular/core';
-import { LoginService } from '../../services/login.service';
 import { NgForm } from '@angular/forms';
-import { RoleRouterService } from '../../services/role-router.service';
+
 import { User } from '../../interfaces/user.interface';
+import { LoginService } from '../../services/login.service';
+import { RoleRouterService } from '../../services/role-router.service';
 
 @Component({
   selector: 'app-login',
@@ -10,9 +11,7 @@ import { User } from '../../interfaces/user.interface';
   styleUrls: []
 })
 export class LoginComponent {
-  
-  @ViewChild('f')
-  public form: NgForm;
+  @ViewChild('f') public form: NgForm;
 
   email: string;
   password: string;
@@ -20,23 +19,27 @@ export class LoginComponent {
   isError = false;
   loading = false;
 
-  constructor(public loginService: LoginService,
-              private userRouter: RoleRouterService) { }
+  constructor(
+    public loginService: LoginService,
+    private userRouter: RoleRouterService
+  ) {}
 
   loginWithEmail() {
     this.loading = true;
-    this.loginService.loginEmail(this.email, this.password)
+    this.loginService
+      .loginEmail(this.email, this.password)
       .then((user: User) => {
-          console.log(user);
-          
-          this.loading = false;
-          this.isError = false;
-          this.msg = 'success login';
-          this.userRouter.routeUser(user);
-      }).catch((err) => { 
-          this.loading = false;
-          this.isError = true;
-          this.msg = err;
+        console.log(user);
+
+        this.loading = false;
+        this.isError = false;
+        this.msg = 'success login';
+        this.userRouter.routeUser(user);
+      })
+      .catch(err => {
+        this.loading = false;
+        this.isError = true;
+        this.msg = err.message;
       });
   }
 
@@ -45,5 +48,4 @@ export class LoginComponent {
     this.isError = false;
     this.form.resetForm();
   }
-
 }
