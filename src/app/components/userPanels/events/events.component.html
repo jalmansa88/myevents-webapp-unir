@@ -1,3 +1,40 @@
-<p>
-    usuario logado: {{user | json}}
-</p>
+<h1 class="text-center text-primary"><strong>My Events</strong></h1>
+<div class="row">
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Event Name</th>
+                <th scope="col">Event Description</th>
+                <th scope="col">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let event of events">
+                <td>{{event.name}}</td>
+                <td>{{event.description}}</td>
+                <td>
+                    <div class="btn-group">
+                        <button class="btn btn-outline-primary">Ver Imágenes</button>
+                        <button *ngIf="user.role === 3" [routerLink]="['/eventadmin', event.uid]" class="btn btn-outline-secondary">Administrar Usuarios</button>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<hr>
+<form *ngIf="user.role <= 2 && user.role != 0" class="form-group row">
+    <div class="col">
+        <span>Subscribe new event</span>
+    </div>
+    <div class="col">
+        <input [(ngModel)]="token" class="form-control" type="text" placeholder="token event" name="token">
+    </div>
+    <div class="col">
+        <button (click)="registerInNewEvent()" class="btn btn-primary" type="button">Subscribe</button>
+    </div>
+</form>
+<div *ngIf="msg" [ngClass]="{'alert alert-dismissible': true, 'alert-danger': error, 'alert-success': !error}">
+    <a class="close" data-dismiss="alert" aria-label="close">&times;</a>
+    <span>{{msg}}</span>
+</div>

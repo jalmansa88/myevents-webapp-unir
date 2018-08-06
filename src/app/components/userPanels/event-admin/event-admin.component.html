@@ -9,20 +9,24 @@
         </tr>
     </thead>
     <tbody>
-        <tr *ngFor="let event of events">
+        <tr *ngIf="event">
             <th scope="row">{{event.uid}}</th>
             <td>{{event.name}}</td>
             <td>{{event.description}}</td>
             <td class="input-group">
                 <input value="{{token}}" type="text" readonly>
-                <select [(ngModel)]="event.tokenrole">
+                <select [ngModel]="event.tokenrole">
                     <option *ngFor="let role of roles" [ngValue]="role.level">
                         {{role.name}} - {{role.level}}
                     </option>
                 </select>
-                <button (click)="generateToken(event.uid, event.tokenrole)" class="btn btn-outline-primary">New Token</button>
+                <button (click)="generateToken(event)" class="btn btn-outline-primary">New Token</button>
+                <div class="p-1">
+                    <img *ngIf="event.loading" src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA=="
+                    />
+                </div>
             </td>
         </tr>
     </tbody>
 </table>
-<app-users-events *ngIf="isEventLoaded" [eventId]="events[0].uid"></app-users-events>
+<app-users-events *ngIf="event" [eventId]="event.uid"></app-users-events>
