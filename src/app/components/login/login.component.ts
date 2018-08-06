@@ -29,8 +29,6 @@ export class LoginComponent {
     this.loginService
       .loginEmail(this.email, this.password)
       .then((user: User) => {
-        console.log(user);
-
         this.loading = false;
         this.isError = false;
         this.msg = 'success login';

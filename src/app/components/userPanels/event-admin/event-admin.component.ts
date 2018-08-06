@@ -46,11 +46,14 @@ export class EventAdminComponent implements OnInit {
     //   this.router.navigate(['home']);
     // }
     this.activatedRoute.params.subscribe(params => {
-      this.eventsService.findByUid(params.uid).subscribe(result => {
-        result.tokenrole = this.roles[0].level;
+      this.eventsService
+        .findByUid(params.uid)
+        .then((result: any) => {
+          result.tokenrole = this.roles[0].level;
 
-        this.event = result;
-      });
+          this.event = result;
+        })
+        .catch(err => {});
     });
   }
 

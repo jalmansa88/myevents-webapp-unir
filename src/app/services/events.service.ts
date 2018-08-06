@@ -25,18 +25,34 @@ export class EventsService {
     return this.db.collection('events').add(event);
   }
 
+  // findByUid(uid: string) {
+  //   return this.db
+  //     .collection('events')
+  //     .doc(uid)
+  //     .snapshotChanges()
+  //     .pipe(
+  //       map((snapshot: any) => {
+  //         const event = snapshot.payload.data();
+  //         event.uid = snapshot.payload.id;
+  //         return event;
+  //       })
+  //     );
+  // }
   findByUid(uid: string) {
-    return this.db
-      .collection('events')
-      .doc(uid)
-      .snapshotChanges()
-      .pipe(
-        map((snapshot: any) => {
-          const event = snapshot.payload.data();
-          event.uid = snapshot.payload.id;
-          return event;
+    return new Promise((resolve, reject) => {
+      this.db
+        .collection('events')
+        .doc(uid)
+        .ref.get()
+        .then(resultDoc => {
+          const event = resultDoc.data();
+          event.uid = resultDoc.id;
+          resolve(event);
         })
-      );
+        .catch(err => {
+          reject(err);
+        });
+    });
   }
 
   mapToEvent = doc => {
@@ -47,32 +63,32 @@ export class EventsService {
   };
 
   findByUserUid(user_uid: string) {
-    let events: any[] = [];
-    console.log(events);
+    const events: any[] = [];
 
     return new Promise((resolve, reject) => {
-      console.log(events);
-
       this.db
-        .collection('attendees', ref => ref.where('user_uid', '==', user_uid))
-        .snapshotChanges()
-        .subscribe((attendeesSnaps: any) => {
-          events = [];
+        .collection('attendees')
+        .ref.where('user_uid', '==', user_uid)
+        .get()
+        .then((attendeesSnaps: any) => {
           attendeesSnaps.forEach((attendeeSnapshot: any) => {
             this.db
               .collection('events')
-              .doc(attendeeSnapshot.payload.doc.data().event_uid)
-              .valueChanges()
-              .subscribe((event: any) => {
-                console.log(events);
-                event.uid = attendeeSnapshot.payload.doc.data().event_uid;
+              .doc(attendeeSnapshot.data().event_uid)
+              .ref.get()
+              .then((eventSnap: any) => {
+                const event = eventSnap.data();
+                event.uid = eventSnap.id;
                 events.push(event);
-                console.log('pushing', event);
+              })
+              .catch(err => {
+                reject(err);
               });
           });
+        })
+        .catch(err => {
+          reject(err);
         });
-      console.log('all events', events);
-
       resolve(events);
     });
   }
@@ -86,20 +102,27 @@ export class EventsService {
           if (!user) {
             reject('Invalid User UID');
           }
-          return this.db.collection('events').ref.get();
+          return this.db
+            .collection('events')
+            .doc(event_uid)
+            .ref.get();
         })
         .then(event => {
+          console.log(event);
+
           if (!event) {
             reject('Invalid Event UID');
           }
+          return event;
         })
-        .then(() => {
-          resolve(
-            this.db.collection('attendees').add({
-              user_uid: user_uid,
-              event_uid: event_uid
-            })
-          );
+        .then((event: any) => {
+          this.db.collection('attendees').add({
+            user_uid: user_uid,
+            event_uid: event_uid
+          });
+          console.log(event.data());
+
+          resolve(event.data());
         })
         .catch(err => {
           reject(err);

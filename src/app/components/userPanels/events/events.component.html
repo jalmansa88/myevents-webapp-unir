@@ -23,7 +23,7 @@
     </table>
 </div>
 <hr>
-<form class="form-group row">
+<form *ngIf="user.role <= 2 && user.role != 0" class="form-group row">
     <div class="col">
         <span>Subscribe new event</span>
     </div>

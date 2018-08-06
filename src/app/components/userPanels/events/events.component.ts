@@ -23,18 +23,17 @@ export class EventsComponent implements OnInit {
     private router: Router,
     private eventService: EventsService,
     private tokenService: TokenService
-  ) {
-    this.user = this.loginService.user;
-  }
+  ) {}
 
-  ngOnInit() {
+  async ngOnInit() {
+    this.user = await this.loginService.user;
     // if (!this.user) {
     //   this.router.navigate(['home']);
     // }
     this.eventService
+      // .findByUserUid('wVRHjd8TVMD334RY8Rj3')
       .findByUserUid(this.user.uid)
       .then((result: any[]) => {
-        console.log(result);
         this.events = result;
       })
       .catch(err => {
@@ -43,8 +42,6 @@ export class EventsComponent implements OnInit {
   }
 
   registerInNewEvent() {
-    console.log(this.token);
-
     this.tokenService
       .findToken(this.token)
       .then(token => {
@@ -53,8 +50,9 @@ export class EventsComponent implements OnInit {
           token.eventId
         );
       })
-      .then(result => {
+      .then((result: any) => {
         console.log(result);
+        this.events.push(result);
 
         this.msg = 'Registrado al evento correctamente';
       })
