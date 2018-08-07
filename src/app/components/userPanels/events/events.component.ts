@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterContentInit, AfterViewChecked, Component, OnChanges, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 
 import { User } from '../../../interfaces/user.interface';
 import { EventsService } from '../../../services/events.service';
@@ -11,12 +12,14 @@ import { TokenService } from '../../../services/token.service';
   templateUrl: './events.component.html',
   styleUrls: ['./events.component.css']
 })
-export class EventsComponent implements OnInit {
+export class EventsComponent
+  implements OnInit, OnDestroy, OnChanges, AfterViewChecked, AfterContentInit {
   user: User;
   events: any[];
   error = false;
   msg: string;
   token: string;
+  userSubscription: Subscription;
 
   constructor(
     private loginService: LoginService,
@@ -25,20 +28,43 @@ export class EventsComponent implements OnInit {
     private tokenService: TokenService
   ) {}
 
-  async ngOnInit() {
-    this.user = await this.loginService.user;
-    // if (!this.user) {
-    //   this.router.navigate(['home']);
-    // }
-    this.eventService
-      // .findByUserUid('wVRHjd8TVMD334RY8Rj3')
-      .findByUserUid(this.user.uid)
-      .then((result: any[]) => {
-        this.events = result;
-      })
-      .catch(err => {
-        console.error(err);
-      });
+  ngOnInit() {
+    this.userSubscription = this.loginService.userObservable.subscribe(user => {
+      this.user = user;
+
+      // if (!this.user) {
+      //   this.router.navigate(['home']);
+      // }
+
+      console.log('onInit');
+
+      this.eventService
+        // .findByUserUid('wVRHjd8TVMD334RY8Rj3')
+        .findByUserUid(this.user.uid)
+        .then((result: any[]) => {
+          this.events = result;
+        })
+        .catch(err => {
+          console.error(err);
+        });
+    });
+  }
+
+  ngOnChanges() {
+    console.log('changes');
+  }
+
+  ngAfterViewChecked() {
+    console.log('view checked');
+  }
+
+  ngAfterContentInit() {
+    console.log('after content init');
+    console.log(this.user);
+  }
+
+  ngOnDestroy(): void {
+    this.userSubscription.unsubscribe();
   }
 
   registerInNewEvent() {
@@ -51,7 +77,6 @@ export class EventsComponent implements OnInit {
         );
       })
       .then((result: any) => {
-        console.log(result);
         this.events.push(result);
 
         this.msg = 'Registrado al evento correctamente';
@@ -62,5 +87,19 @@ export class EventsComponent implements OnInit {
         this.msg = err;
         this.error = true;
       });
+  }
+
+  unsubscribeUserFromEvent(i: number) {
+    const event_uid = this.events[i].uid;
+    console.log(this.events);
+    console.log('indice', i);
+
+    console.log('trying to unsubscribe of event', event_uid);
+    this.eventService
+      .unsubscribeUserFromEvent(this.user.uid, event_uid)
+      .then(result => {
+        this.events = this.events.filter(event => event.uid !== event_uid);
+      })
+      .catch(err => {});
   }
 }

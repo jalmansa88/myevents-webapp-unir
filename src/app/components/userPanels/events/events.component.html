@@ -9,12 +9,13 @@
             </tr>
         </thead>
         <tbody>
-            <tr *ngFor="let event of events">
+            <tr *ngFor="let event of events; let i = index">
                 <td>{{event.name}}</td>
                 <td>{{event.description}}</td>
                 <td>
                     <div class="btn-group">
-                        <button class="btn btn-outline-primary">Ver Imágenes</button>
+                        <button class="btn btn-outline-primary">See Images</button>
+                        <button (click)="unsubscribeUserFromEvent(i)" type="button" class="btn btn-outline-danger">Unsubscribe</button>
                         <button *ngIf="user.role === 3" [routerLink]="['/eventadmin', event.uid]" class="btn btn-outline-secondary">Administrar Usuarios</button>
                     </div>
                 </td>
@@ -22,8 +23,11 @@
         </tbody>
     </table>
 </div>
+<div class="row justify-content-center">
+    <span *ngIf="!events || !events.length" class="alert alert-primary">No event under Subscription :(</span>
+</div>
 <hr>
-<form *ngIf="user.role <= 2 && user.role != 0" class="form-group row">
+<form *ngIf="user?.role <= 2 && user?.role != 0" class="form-group row">
     <div class="col">
         <span>Subscribe new event</span>
     </div>

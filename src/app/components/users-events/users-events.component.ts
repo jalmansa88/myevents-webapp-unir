@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 
 import { User } from '../../interfaces/user.interface';
+import { EventsService } from '../../services/events.service';
 import { UserService } from '../../services/user.service';
 
 @Component({
@@ -9,17 +10,20 @@ import { UserService } from '../../services/user.service';
   styleUrls: ['./users-events.component.css']
 })
 export class UsersEventsComponent implements OnInit {
-  @Input() eventId: string;
+  @Input() event_uid: string;
 
   users: User[] = [];
   msg: string;
   isError = false;
 
-  constructor(private userService: UserService) {}
+  constructor(
+    private userService: UserService,
+    private eventService: EventsService
+  ) {}
 
   ngOnInit() {
     this.userService
-      .findByEventUid(this.eventId)
+      .findByEventUid(this.event_uid)
       .then((result: User[]) => {
         this.users = result;
       })
@@ -49,6 +53,13 @@ export class UsersEventsComponent implements OnInit {
       .catch(err => {
         this.onError('Error borrando user: ' + err);
       });
+  }
+
+  unsubscribeFromEvent(i: number) {
+    this.eventService.unsubscribeUserFromEvent(
+      this.users[i].uid,
+      this.event_uid
+    );
   }
 
   onSuccess(msg: string) {

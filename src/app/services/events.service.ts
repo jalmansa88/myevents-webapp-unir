@@ -108,8 +108,6 @@ export class EventsService {
             .ref.get();
         })
         .then(event => {
-          console.log(event);
-
           if (!event) {
             reject('Invalid Event UID');
           }
@@ -120,9 +118,31 @@ export class EventsService {
             user_uid: user_uid,
             event_uid: event_uid
           });
-          console.log(event.data());
+          const e = event.data();
+          e.uid = event.id;
+          resolve(e);
+        })
+        .catch(err => {
+          reject(err);
+        });
+    });
+  }
 
-          resolve(event.data());
+  unsubscribeUserFromEvent(user_uid: string, event_uid: string) {
+    return new Promise((resolve, reject) => {
+      this.db
+        .collection('attendees')
+        .ref.where('user_uid', '==', user_uid)
+        .where('event_uid', '==', event_uid)
+        .limit(1)
+        .get()
+        .then((result: any) => {
+          resolve(
+            this.db
+              .collection('attendees')
+              .doc(result.docs[0].id)
+              .delete()
+          );
         })
         .catch(err => {
           reject(err);

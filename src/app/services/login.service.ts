@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { AngularFireAuth } from 'angularfire2/auth';
 import { auth } from 'firebase';
+import { Subject } from 'rxjs';
 
 import { User } from '../interfaces/user.interface';
 import { UserService } from './user.service';
@@ -11,13 +12,36 @@ import { UserService } from './user.service';
 })
 export class LoginService {
   public user: User;
+
+  public userObservable = new Subject<User>();
   token: any;
 
   constructor(
     private afAuth: AngularFireAuth,
     private userService: UserService,
     private router: Router
-  ) {}
+  ) {
+    this.userObservable.asObservable();
+    this.authUserCheck();
+  }
+
+  private authUserCheck() {
+    this.afAuth.authState.subscribe(authUser => {
+      if (authUser && authUser.email) {
+        this.userService
+          .findUserByEmail(authUser.email)
+          .then((result: User) => {
+            this.user = result;
+            this.userObservable.next(result);
+          })
+          .catch(err => {
+            console.error(err);
+          });
+      } else {
+        this.userObservable.next(null);
+      }
+    });
+  }
 
   loginFacebook() {
     return new Promise((resolve, reject) => {
@@ -64,9 +88,5 @@ export class LoginService {
     this.user = null;
     this.afAuth.auth.signOut();
     this.router.navigate(['home']);
-  }
-
-  public isLoggedIn() {
-    this.afAuth.authState.subscribe(user => user).unsubscribe();
   }
 }
