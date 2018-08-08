@@ -38,6 +38,7 @@ export class LoginComponent {
         this.loading = false;
         this.isError = true;
         this.msg = err.message;
+        this.loginService.logout();
       });
   }
 

@@ -1,7 +1,7 @@
-<div *ngIf="loginService.isLoggedIn()">
-    <div class="alert alert-success" role="alert">¡Ya estás logado!</div>
+<div *ngIf="loginService.user">
+    <div class="alert alert-success" role="alert">¡Ya estás registrado y logado!</div>
 </div>
-<div *ngIf="!loginService.isLoggedIn()" class="input-group mb-3 container">
+<div *ngIf="!loginService.user" class="input-group mb-3 container">
     <button (click)="registerWithFb()" class="loginBtn loginBtn--facebook">
         Registro con Facebook
     </button>
@@ -75,7 +75,7 @@
         </div>
     </form>
 </div>
-<div *ngIf="!loginService.isLoggedIn()" class="input-group">
+<div *ngIf="!loginService.user" class="input-group">
     <div class="input-group-prepend">
         <span class="input-group-text">Código de registro</span>
     </div>

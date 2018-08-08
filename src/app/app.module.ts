@@ -18,7 +18,7 @@ import { RegistrationComponent } from './components/registration/registration.co
 import { EventAdminComponent } from './components/userPanels/event-admin/event-admin.component';
 import { EventsComponent } from './components/userPanels/events/events.component';
 import { ServiceProviderComponent } from './components/userPanels/service-provider/service-provider.component';
-import { UsersEventsComponent } from './components/users-events/users-events.component';
+import { UsersEventsComponent } from './components/users-events-list/users-events-list.component';
 import { EventsService } from './services/events.service';
 import { LoginService } from './services/login.service';
 import { RegistrationService } from './services/registration.service';

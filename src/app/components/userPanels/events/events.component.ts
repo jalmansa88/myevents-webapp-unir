@@ -1,4 +1,4 @@
-import { AfterContentInit, AfterViewChecked, Component, OnChanges, OnDestroy, OnInit } from '@angular/core';
+import { AfterContentChecked, Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 
@@ -12,13 +12,14 @@ import { TokenService } from '../../../services/token.service';
   templateUrl: './events.component.html',
   styleUrls: ['./events.component.css']
 })
-export class EventsComponent
-  implements OnInit, OnDestroy, OnChanges, AfterViewChecked, AfterContentInit {
+export class EventsComponent implements OnInit, AfterContentChecked {
   user: User;
   events: any[];
   error = false;
   msg: string;
   token: string;
+  dataRecovered: boolean;
+  rendered: boolean;
   userSubscription: Subscription;
 
   constructor(
@@ -29,42 +30,32 @@ export class EventsComponent
   ) {}
 
   ngOnInit() {
+    this.dataRecovered = false;
+    this.rendered = false;
     this.userSubscription = this.loginService.userObservable.subscribe(user => {
       this.user = user;
 
       // if (!this.user) {
       //   this.router.navigate(['home']);
       // }
+    });
+  }
 
-      console.log('onInit');
-
+  ngAfterContentChecked() {
+    if (!this.user) {
+      this.user = this.loginService.user;
+    }
+    if (this.user && !this.dataRecovered) {
       this.eventService
-        // .findByUserUid('wVRHjd8TVMD334RY8Rj3')
         .findByUserUid(this.user.uid)
         .then((result: any[]) => {
           this.events = result;
+          this.dataRecovered = true;
         })
         .catch(err => {
           console.error(err);
         });
-    });
-  }
-
-  ngOnChanges() {
-    console.log('changes');
-  }
-
-  ngAfterViewChecked() {
-    console.log('view checked');
-  }
-
-  ngAfterContentInit() {
-    console.log('after content init');
-    console.log(this.user);
-  }
-
-  ngOnDestroy(): void {
-    this.userSubscription.unsubscribe();
+    }
   }
 
   registerInNewEvent() {

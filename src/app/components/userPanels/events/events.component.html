@@ -24,7 +24,7 @@
     </table>
 </div>
 <div class="row justify-content-center">
-    <span *ngIf="!events || !events.length" class="alert alert-primary">No event under Subscription :(</span>
+    <span *ngIf="dataRecovered && (!events || !events.length)" class="alert alert-primary">No event under Subscription :(</span>
 </div>
 <hr>
 <form *ngIf="user?.role <= 2 && user?.role != 0" class="form-group row">

@@ -5,9 +5,9 @@ import { EventsService } from '../../services/events.service';
 import { UserService } from '../../services/user.service';
 
 @Component({
-  selector: 'app-users-events',
-  templateUrl: './users-events.component.html',
-  styleUrls: ['./users-events.component.css']
+  selector: 'app-users-events-list',
+  templateUrl: './users-events-list.component.html',
+  styleUrls: ['./users-events-list.component.css']
 })
 export class UsersEventsComponent implements OnInit {
   @Input() event_uid: string;
