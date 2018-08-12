@@ -15,7 +15,7 @@ export class RoleRouterService {
     } else if (user.role === 4) {
       this.router.navigate(['serviceprovider']);
     } else {
-      console.error('wtf?, que rol es este omg');
+      console.error('Rol no válido');
     }
   }
 }

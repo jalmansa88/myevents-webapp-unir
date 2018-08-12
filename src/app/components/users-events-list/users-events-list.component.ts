@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { ToastrService } from 'ngx-toastr';
 
 import { User } from '../../interfaces/user.interface';
 import { EventsService } from '../../services/events.service';
@@ -10,15 +11,15 @@ import { UserService } from '../../services/user.service';
   styleUrls: ['./users-events-list.component.css']
 })
 export class UsersEventsComponent implements OnInit {
-  @Input() event_uid: string;
+  @Input()
+  event_uid: string;
 
   users: User[] = [];
-  msg: string;
-  isError = false;
 
   constructor(
     private userService: UserService,
-    private eventService: EventsService
+    private eventService: EventsService,
+    private toastService: ToastrService
   ) {}
 
   ngOnInit() {
@@ -28,7 +29,9 @@ export class UsersEventsComponent implements OnInit {
         this.users = result;
       })
       .catch(err => {
-        this.onError('Error buscando usuarios para este evento: ' + err);
+        this.toastService.error(
+          'Error buscando usuarios para este evento: ' + err
+        );
       });
   }
 
@@ -36,10 +39,10 @@ export class UsersEventsComponent implements OnInit {
     return this.userService
       .update(user)
       .then(result => {
-        this.onSuccess('Usuario actualizado correctamente');
+        this.toastService.success('Usuario actualizado correctamente');
       })
       .catch(err => {
-        this.onError(err);
+        this.toastService.error(err);
       });
   }
 
@@ -47,11 +50,11 @@ export class UsersEventsComponent implements OnInit {
     return this.userService
       .delete(this.users[i].uid)
       .then(result => {
-        this.onSuccess('Usuario eliminado del evento correctamente');
+        this.toastService.success('Usuario eliminado del evento correctamente');
         this.users.splice(i, 1);
       })
       .catch(err => {
-        this.onError('Error borrando user: ' + err);
+        this.toastService.error('Error borrando user: ' + err);
       });
   }
 
@@ -60,15 +63,5 @@ export class UsersEventsComponent implements OnInit {
       this.users[i].uid,
       this.event_uid
     );
-  }
-
-  onSuccess(msg: string) {
-    this.isError = false;
-    this.msg = msg;
-  }
-
-  onError(msg: string) {
-    this.isError = true;
-    this.msg = msg;
   }
 }

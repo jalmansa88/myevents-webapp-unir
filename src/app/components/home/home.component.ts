@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { ToastrService } from 'ngx-toastr';
+
 import { LoginService } from '../../services/login.service';
 import { RoleRouterService } from '../../services/role-router.service';
 
@@ -10,34 +12,48 @@ declare var $;
   styleUrls: []
 })
 export class HomeComponent implements OnInit {
-  
   isLoginWithEmail = false;
-  errorMsg: string;
+  tempToken: string;
 
-  constructor(public loginService: LoginService,
-              private roleRouterService: RoleRouterService) { }
+  constructor(
+    public loginService: LoginService,
+    private roleRouterService: RoleRouterService,
+    private toastService: ToastrService
+  ) {}
 
-  ngOnInit() { 
+  ngOnInit() {
     if (this.loginService.user) {
       this.roleRouterService.routeUser(this.loginService.user);
     }
 
     $('.close').click(function() {
       $('#errorAlert').alert('close');
-  });
+    });
   }
 
   loginFacebook() {
-    this.loginService.loginFacebook()
-    .then((result) => {
-      this.roleRouterService.routeUser(this.loginService.user);
-    })
-    .catch((err) => {
-      this.errorMsg = err;
-    });
+    this.loginService
+      .loginFacebook()
+      .then(result => {
+        this.roleRouterService.routeUser(this.loginService.user);
+      })
+      .catch(err => {
+        this.toastService.error(err);
+      });
   }
 
   openEmailRegistrationForm() {
     this.isLoginWithEmail = true;
+  }
+
+  temporalAccess() {
+    this.loginService
+      .temporalLogin(this.tempToken)
+      .then(result => {
+        this.roleRouterService.routeUser(this.loginService.user);
+      })
+      .catch(err => {
+        this.toastService.error(err);
+      });
   }
 }

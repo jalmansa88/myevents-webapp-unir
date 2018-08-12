@@ -1,5 +1,6 @@
 import { AfterContentChecked, Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
 
 import { User } from '../../../interfaces/user.interface';
@@ -15,8 +16,6 @@ import { TokenService } from '../../../services/token.service';
 export class EventsComponent implements OnInit, AfterContentChecked {
   user: User;
   events: any[];
-  error = false;
-  msg: string;
   token: string;
   dataRecovered: boolean;
   rendered: boolean;
@@ -26,18 +25,36 @@ export class EventsComponent implements OnInit, AfterContentChecked {
     private loginService: LoginService,
     private router: Router,
     private eventService: EventsService,
-    private tokenService: TokenService
+    private tokenService: TokenService,
+    private toastService: ToastrService
   ) {}
 
   ngOnInit() {
     this.dataRecovered = false;
     this.rendered = false;
+
     this.userSubscription = this.loginService.userObservable.subscribe(user => {
       this.user = user;
 
       // if (!this.user) {
       //   this.router.navigate(['home']);
       // }
+
+      if (this.user && this.user.role === 0) {
+        this.eventService.findByUid(this.user.events).then((result: any[]) => {
+          this.events = result;
+        });
+      } else if (this.user) {
+        this.eventService
+          .findByUserUid(this.user.uid)
+          .then((result: any[]) => {
+            this.events = result;
+            this.dataRecovered = true;
+          })
+          .catch(err => {
+            this.toastService.error(err);
+          });
+      }
     });
   }
 
@@ -45,7 +62,19 @@ export class EventsComponent implements OnInit, AfterContentChecked {
     if (!this.user) {
       this.user = this.loginService.user;
     }
-    if (this.user && !this.dataRecovered) {
+    if (
+      this.user &&
+      this.user.role === 0 &&
+      !this.events &&
+      !this.dataRecovered
+    ) {
+      this.eventService.findByUid(this.user.events).then((result: any[]) => {
+        this.events = new Array(result);
+      });
+
+      this.dataRecovered = true;
+    }
+    if (this.user && !this.events && !this.dataRecovered) {
       this.eventService
         .findByUserUid(this.user.uid)
         .then((result: any[]) => {
@@ -53,7 +82,7 @@ export class EventsComponent implements OnInit, AfterContentChecked {
           this.dataRecovered = true;
         })
         .catch(err => {
-          console.error(err);
+          this.toastService.error(err);
         });
     }
   }
@@ -70,22 +99,15 @@ export class EventsComponent implements OnInit, AfterContentChecked {
       .then((result: any) => {
         this.events.push(result);
 
-        this.msg = 'Registrado al evento correctamente';
+        this.toastService.success('Registrado al evento correctamente');
       })
       .catch(err => {
-        console.log(err);
-
-        this.msg = err;
-        this.error = true;
+        this.toastService.error(err);
       });
   }
 
   unsubscribeUserFromEvent(i: number) {
     const event_uid = this.events[i].uid;
-    console.log(this.events);
-    console.log('indice', i);
-
-    console.log('trying to unsubscribe of event', event_uid);
     this.eventService
       .unsubscribeUserFromEvent(this.user.uid, event_uid)
       .then(result => {

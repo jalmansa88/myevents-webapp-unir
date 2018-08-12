@@ -16,18 +16,23 @@ export class UserService {
   findUserByEmail(emailToFind: string): Promise<any> {
     return new Promise((resolve, reject) => {
       this.db
-        .collection('users', ref =>
-          ref.where('email', '==', emailToFind).limit(1)
-        )
-        .snapshotChanges()
-        .subscribe(response => {
+        .collection('users')
+        .ref.where('email', '==', emailToFind)
+        .limit(1)
+        .get()
+        .then(response => {
           if (response) {
-            const user: User = response[0].payload.doc.data();
-            user.uid = response[0].payload.doc.id;
+            const user: User = response.docs[0].data();
+            user.uid = response.docs[0].id;
             resolve(user);
           } else {
             reject('user not registered');
           }
+        })
+        .catch(err => {
+          console.log(err);
+
+          reject('user not registered');
         });
     });
   }

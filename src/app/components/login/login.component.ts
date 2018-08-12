@@ -1,5 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
+import { ToastrService } from 'ngx-toastr';
 
 import { User } from '../../interfaces/user.interface';
 import { LoginService } from '../../services/login.service';
@@ -11,17 +12,17 @@ import { RoleRouterService } from '../../services/role-router.service';
   styleUrls: []
 })
 export class LoginComponent {
-  @ViewChild('f') public form: NgForm;
+  @ViewChild('f')
+  public form: NgForm;
 
   email: string;
   password: string;
-  msg: string;
-  isError = false;
   loading = false;
 
   constructor(
     public loginService: LoginService,
-    private userRouter: RoleRouterService
+    private userRouter: RoleRouterService,
+    private toastService: ToastrService
   ) {}
 
   loginWithEmail() {
@@ -30,21 +31,17 @@ export class LoginComponent {
       .loginEmail(this.email, this.password)
       .then((user: User) => {
         this.loading = false;
-        this.isError = false;
-        this.msg = 'success login';
+        this.toastService.success('Success Login');
         this.userRouter.routeUser(user);
       })
       .catch(err => {
         this.loading = false;
-        this.isError = true;
-        this.msg = err.message;
+        this.toastService.error(err.message);
         this.loginService.logout();
       });
   }
 
   resetForm() {
-    this.msg = null;
-    this.isError = false;
     this.form.resetForm();
   }
 }

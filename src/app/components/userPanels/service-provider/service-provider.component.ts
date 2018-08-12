@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 
 import { User } from '../../../interfaces/user.interface';
 import { EventsService } from '../../../services/events.service';
@@ -19,7 +20,8 @@ export class ServiceProviderComponent implements OnInit {
     private loginService: LoginService,
     private eventService: EventsService,
     private tokenService: TokenService,
-    private router: Router
+    private router: Router,
+    private toastService: ToastrService
   ) {
     this.user = this.loginService.user;
   }
@@ -44,7 +46,7 @@ export class ServiceProviderComponent implements OnInit {
         delete event.loading;
       })
       .catch(err => {
-        console.error(err);
+        this.toastService.error(err);
         delete event.loading;
       });
   }
@@ -61,6 +63,8 @@ export class ServiceProviderComponent implements OnInit {
       .then(result => {
         // this.events.push(result);
       })
-      .catch(err => {});
+      .catch(err => {
+        this.toastService.error(err);
+      });
   }
 }

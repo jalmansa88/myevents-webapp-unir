@@ -91,9 +91,14 @@ export class RegistrationService {
     return this.tokenService
       .findToken(formToken)
       .then(tokenResult => {
-        this.token.value = tokenResult.value;
-        this.token.role = tokenResult.role;
-        this.token.eventId = tokenResult.eventId;
+        if (tokenResult.role === 0) {
+          throw new Error('Token temporal no válido para registro');
+        }
+        this.token = {
+          value: tokenResult.value,
+          role: tokenResult.role,
+          eventId: tokenResult.eventId
+        };
       })
       .then(() => {
         return this.afAuth.auth.createUserWithEmailAndPassword(
@@ -111,7 +116,6 @@ export class RegistrationService {
         });
       })
       .then(saveResponse => {
-        console.log('saveresponse email', saveResponse);
         this.eventsService.addAttendeeToEvent(
           saveResponse.id,
           this.token.eventId

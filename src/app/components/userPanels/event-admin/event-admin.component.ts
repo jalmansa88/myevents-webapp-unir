@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 
 import { User } from '../../../interfaces/user.interface';
 import { EventsService } from '../../../services/events.service';
@@ -36,7 +37,8 @@ export class EventAdminComponent implements OnInit {
     private loginService: LoginService,
     private tokenService: TokenService,
     private eventsService: EventsService,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private toastService: ToastrService
   ) {}
 
   ngOnInit() {
@@ -58,21 +60,18 @@ export class EventAdminComponent implements OnInit {
   }
 
   generateToken(event: any) {
-    console.log('event id', event.uid);
-    console.log('role', event.tokenrole);
     event.loading = true;
 
     this.tokenService
       .generate(event.uid, event.tokenrole)
       .then((result: any) => {
-        console.log('token', result);
         delete event.loading;
 
         this.token = result.token;
       })
       .catch(err => {
         delete event.loading;
-        console.error(err);
+        this.toastService.error(err);
       });
   }
 }

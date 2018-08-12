@@ -22,7 +22,6 @@ export class TokenService {
             const token = response.docs[0].data();
 
             const minutes = (Date.now() / 1000 - token.timestamp) / 60;
-            console.log('minutos', minutes);
 
             if (minutes > 60) {
               reject('Expired Token');

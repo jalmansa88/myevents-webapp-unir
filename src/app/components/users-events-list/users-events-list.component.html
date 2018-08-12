@@ -23,7 +23,3 @@
         </tr>
     </tbody>
 </table>
-<div *ngIf="msg" [ngClass]="{'alert alert-dismissible': true, 'alert-danger': isError, 'alert-success': !isError}">
-    <a class="close" (click)="msg = ''">&times;</a>
-    <span>{{msg}}</span>
-</div>

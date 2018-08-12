@@ -1,33 +1,40 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { AngularFireAuth } from 'angularfire2/auth';
 import { auth } from 'firebase';
+import * as firebase from 'firebase';
+import { ToastrService } from 'ngx-toastr';
 import { Subject } from 'rxjs';
 
 import { User } from '../interfaces/user.interface';
+import { TokenService } from './token.service';
 import { UserService } from './user.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class LoginService {
+export class LoginService implements OnDestroy {
   public user: User;
 
   public userObservable = new Subject<User>();
-  token: any;
 
   constructor(
     private afAuth: AngularFireAuth,
     private userService: UserService,
-    private router: Router
+    private tokenService: TokenService,
+    private router: Router,
+    private toastService: ToastrService
   ) {
+    this.afAuth.auth.setPersistence(firebase.auth.Auth.Persistence.SESSION);
     this.userObservable.asObservable();
     this.authUserCheck();
   }
 
-  private authUserCheck() {
+  private async authUserCheck() {
     this.afAuth.authState.subscribe(authUser => {
-      if (authUser && authUser.email) {
+      if (authUser && authUser.isAnonymous) {
+        this.userObservable.next(this.user);
+      } else if (authUser && authUser.email) {
         this.userService
           .findUserByEmail(authUser.email)
           .then((result: User) => {
@@ -35,7 +42,8 @@ export class LoginService {
             this.userObservable.next(result);
           })
           .catch(err => {
-            console.error(err);
+            this.toastService.error(err);
+            throw err;
           });
       } else {
         this.userObservable.next(null);
@@ -60,7 +68,7 @@ export class LoginService {
           resolve('loggedin');
         })
         .catch(err => {
-          console.error(err);
+          this.toastService.error(err);
           this.afAuth.auth.currentUser.delete();
           reject(err);
         });
@@ -88,5 +96,40 @@ export class LoginService {
     this.user = null;
     this.afAuth.auth.signOut();
     this.router.navigate(['home']);
+  }
+
+  temporalLogin(token: string) {
+    let resultToken: any;
+
+    return new Promise((resolve, reject) => {
+      this.tokenService
+        .findToken(token)
+        .then((tokenResponse: any) => {
+          resultToken = tokenResponse;
+          if (resultToken.role !== 0) {
+            reject('Not a temporal token');
+          } else {
+            return this.afAuth.auth.signInAnonymously();
+          }
+        })
+        .then(() => {
+          this.user = this.user = {
+            firstname: 'Anonymous',
+            role: 0,
+            events: resultToken.eventId
+          };
+          return this.authUserCheck();
+        })
+        .then(() => {
+          resolve(this.user);
+        })
+        .catch(err => {
+          reject(err);
+        });
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.logout();
   }
 }

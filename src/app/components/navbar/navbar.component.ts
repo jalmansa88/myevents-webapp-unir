@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { ToastrService } from 'ngx-toastr';
+
 import { LoginService } from '../../services/login.service';
 
 @Component({
@@ -7,11 +9,13 @@ import { LoginService } from '../../services/login.service';
   styleUrls: []
 })
 export class NavbarComponent {
-
-  constructor(public loginService: LoginService) { }
+  constructor(
+    public loginService: LoginService,
+    private toastService: ToastrService
+  ) {}
 
   logout() {
+    this.toastService.warning('Deslogado correctamente');
     this.loginService.logout();
   }
-
 }
