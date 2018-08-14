@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { LoginService } from '../../../services/login.service';
 import { Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
+
 import { User } from '../../../interfaces/user.interface';
 import { EventsService } from '../../../services/events.service';
-import { map } from 'rxjs/operators';
+import { LoginService } from '../../../services/login.service';
 import { TokenService } from '../../../services/token.service';
 
 @Component({
@@ -12,47 +13,58 @@ import { TokenService } from '../../../services/token.service';
   styleUrls: ['./service-provider.component.css']
 })
 export class ServiceProviderComponent implements OnInit {
-
   user: User;
   events: any[];
 
-  constructor(private loginService: LoginService,
-              private eventService: EventsService,
-              private tokenService: TokenService,
-              private router: Router) {
-
-  this.user = this.loginService.user;
+  constructor(
+    private loginService: LoginService,
+    private eventService: EventsService,
+    private tokenService: TokenService,
+    private router: Router,
+    private toastService: ToastrService
+  ) {
+    this.user = this.loginService.user;
   }
 
   ngOnInit() {
     // if (!this.user) {
     //   this.router.navigate(['home']);
     // }
-    
-    this.eventService.getAll()
-      .pipe(map((snapshot: any) => {
-        return snapshot.map(this.mapToEvent);
-      }))
-      .subscribe((result: any) => {
-        this.events = result;
+
+    this.eventService.getAll().subscribe((result: any) => {
+      this.events = result;
+    });
+  }
+
+  generateToken(event: any) {
+    event.loading = true;
+    // ROLE 3 is a Event Administrator.
+    this.tokenService
+      .generate(event.uid, 3)
+      .then((result: any) => {
+        event.tokenvalue = result.token;
+        delete event.loading;
+      })
+      .catch(err => {
+        this.toastService.error(err);
+        delete event.loading;
       });
-    }
-    
-    mapToEvent = doc => {
-      const event = doc.payload.doc.data();
-      event.uid = doc.payload.doc.id;
-      
-      return event;
-    }
-    
-    generateToken(event: any) {
-      // ROLE 3 is a Event Administrator.
-      this.tokenService.generate(event.uid, 3)
-        .then((result: any) => {
-          event.token = result.token;
-        })
-        .catch((err) => {
-          console.error(err);
+  }
+
+  newEvent() {
+    this.events.push({ isNew: true });
+  }
+
+  saveEvent(event: any) {
+    delete event.isNew;
+    this.events.pop();
+    this.eventService
+      .save(event)
+      .then(result => {
+        // this.events.push(result);
+      })
+      .catch(err => {
+        this.toastService.error(err);
       });
-    }
+  }
 }

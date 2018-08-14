@@ -1,21 +1,26 @@
+<h1 class="text-center text-primary"><strong>Service Provider Dashboard</strong></h1>
 <table class="table">
     <thead>
         <tr>
-            <th scope="col">#ID</th>
             <th scope="col">Event Name</th>
             <th scope="col">Event Description</th>
-            <th scope="col">Actions</th>
+            <th scope="col">Registration AdminEvent Token</th>
         </tr>
     </thead>
     <tbody>
         <tr *ngFor="let event of events">
-            <th scope="row">{{event.uid}}</th>
-            <td>{{event.name}}</td>
-            <td>{{event.description}}</td>
-            <td>
-                <button (click)="generateToken(event)" class="btn btn-outline-primary">Generar Token</button>
-                <span>{{event.token}}</span>
+            <td><input [ngClass]="{'col-sm mw-100': true, 'border-0': !event.isNew}" [(ngModel)]="event.name" [value]="event.name" [readonly]="!event.isNew"></td>
+            <td><input [ngClass]="{'col-sm mw-100': true, 'border-0': !event.isNew}" [(ngModel)]="event.description" [value]="event.description" [readonly]="!event.isNew"></td>
+            <td class="input-group" *ngIf="!event.isNew">
+                <input value="{{event.tokenvalue}}" type="text" readonly>
+                <button (click)="generateToken(event)" class="btn btn-outline-primary">New Token</button>
+                <div class="p-1">
+                    <img *ngIf="event.loading" src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA=="
+                    />
+                </div>
             </td>
+            <td *ngIf="event.isNew"><button (click)="saveEvent(event)" class="btn btn-success">Save</button></td>
         </tr>
     </tbody>
+    <button (click)="newEvent()" type="button" class="btn btn-outline-dark">New Event</button>
 </table>

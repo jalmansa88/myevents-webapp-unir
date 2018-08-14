@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { User } from '../../interfaces/user.interface';
 import { Router } from '@angular/router';
-import { RegistrationService } from '../../services/registration.service';
+import { ToastrService } from 'ngx-toastr';
+
+import { User } from '../../interfaces/user.interface';
 import { LoginService } from '../../services/login.service';
-import { NgForm } from '@angular/forms';
+import { RegistrationService } from '../../services/registration.service';
 import { RoleRouterService } from '../../services/role-router.service';
 
 @Component({
@@ -12,65 +13,66 @@ import { RoleRouterService } from '../../services/role-router.service';
   styleUrls: ['./registration.component.css']
 })
 export class RegistrationComponent implements OnInit {
-  
   user: User = {};
   token: string;
   showForm = false;
   loading = false;
 
   invalidToken = false;
-  isError = false;
-  msg: string;
 
-  constructor(private router: Router, 
-              private regService: RegistrationService, 
-              public loginService: LoginService,
-              public roleRouterService: RoleRouterService) { }
-
+  constructor(
+    private router: Router,
+    private regService: RegistrationService,
+    public loginService: LoginService,
+    public roleRouterService: RoleRouterService,
+    private toastService: ToastrService
+  ) {}
 
   ngOnInit() {
     if (this.loginService.user) {
       this.roleRouterService.routeUser(this.loginService.user);
     }
   }
-              
+
   registerWithFb() {
     this.showForm = false;
     this.loading = true;
-    this.isError = false;
 
-    if (! this.token) {
-      this.msg = 'Introduzca un Código de registro válido. Consulte al Administrador del evento';
-      this.isError = true;
+    if (!this.token) {
+      this.toastService.error(
+        'Introduzca un Código de registro válido. Consulte al Administrador del evento'
+      );
     }
-    
-    this.regService.withFacebook(this.token, this.user)
+
+    this.regService
+      .withFacebook(this.token, this.user)
       .then(success => {
-        console.log('exito', success);
-        this.msg = 'Registro satisfactorio';
+        this.toastService.success('Registro satisfactorio');
         this.router.navigate(['home']);
       })
-      .catch(err => { 
+      .catch(err => {
         if (err === 'invalid token') {
-          this.msg = 'Introduzca un Código de registro válido. Consulte al Administrador del evento';
-          this.isError = true;
+          this.toastService.error(
+            'Introduzca un Código de registro válido. Consulte al Administrador del evento'
+          );
         }
-        console.error(err);
-      }
-    );
+        this.loginService.logout();
+      });
   }
-  
+
   registerWithEmail() {
     this.loading = true;
-    this.isError = false;
-    this.regService.withEmail(this.token, this.user)
-      .then(response => { 
-        this.msg = 'Registro satisfactorio';
+    this.regService
+      .withEmail(this.token, this.user)
+      .then(response => {
+        console.log(response);
+
+        this.toastService.success('Registro satisfactoio');
         this.loading = false;
         this.router.navigate(['home']);
-      }).catch(err => {
-        this.isError = true;
-        this.msg = err;
+      })
+      .catch(err => {
+        this.toastService.error(err);
         this.loading = false;
       });
   }

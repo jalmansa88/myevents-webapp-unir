@@ -1,6 +1,9 @@
 import { Component, ViewChild } from '@angular/core';
-import { LoginService } from '../../services/login.service';
 import { NgForm } from '@angular/forms';
+import { ToastrService } from 'ngx-toastr';
+
+import { User } from '../../interfaces/user.interface';
+import { LoginService } from '../../services/login.service';
 import { RoleRouterService } from '../../services/role-router.service';
 
 @Component({
@@ -9,35 +12,36 @@ import { RoleRouterService } from '../../services/role-router.service';
   styleUrls: []
 })
 export class LoginComponent {
-  
   @ViewChild('f')
   public form: NgForm;
 
   email: string;
   password: string;
   loading = false;
-  errMsg: string;
-  successMsg: string;
 
-  constructor(public loginService: LoginService,
-              private userRouter: RoleRouterService) { }
+  constructor(
+    public loginService: LoginService,
+    private userRouter: RoleRouterService,
+    private toastService: ToastrService
+  ) {}
 
   loginWithEmail() {
     this.loading = true;
-    this.loginService.loginEmail(this.email, this.password)
-      .then((result) => {
-          this.loading = false;
-          this.successMsg = 'success login';
-          this.userRouter.routeUser(this.loginService.user);
-      }).catch((err) => { 
-          this.loading = false;
-          this.errMsg = err;
+    this.loginService
+      .loginEmail(this.email, this.password)
+      .then((user: User) => {
+        this.loading = false;
+        this.toastService.success('Success Login');
+        this.userRouter.routeUser(user);
+      })
+      .catch(err => {
+        this.loading = false;
+        this.toastService.error(err.message);
+        this.loginService.logout();
       });
   }
 
   resetForm() {
-    this.errMsg = null;
     this.form.resetForm();
   }
-
 }

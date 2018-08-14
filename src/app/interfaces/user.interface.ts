@@ -6,6 +6,6 @@ export interface User {
     phone?: number;
     password?: string;
     role?: number;
-    events?: string[];
+    events?: string;
     photoUrl?: string;
 }

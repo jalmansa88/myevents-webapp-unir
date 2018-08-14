@@ -1,6 +1,5 @@
-import { Component } from '@angular/core';
-import { AngularFirestore } from 'angularfire2/firestore';
-import { Observable } from 'rxjs';
+import { Component, OnInit } from '@angular/core';
+
 import { LoginService } from './services/login.service';
 
 @Component({
@@ -8,12 +7,8 @@ import { LoginService } from './services/login.service';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
+  constructor(public loginService: LoginService) {}
 
-  user = {};
-
-  public items: Observable<any[]>;
-
-  constructor(public loginService: LoginService) {
-  }
+  ngOnInit(): void {}
 }
