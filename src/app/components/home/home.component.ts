@@ -25,10 +25,6 @@ export class HomeComponent implements OnInit {
     if (this.loginService.user) {
       this.roleRouterService.routeUser(this.loginService.user);
     }
-
-    $('.close').click(function() {
-      $('#errorAlert').alert('close');
-    });
   }
 
   loginFacebook() {

@@ -16,12 +16,17 @@ import { AboutComponent } from './components/about/about.component';
 import { HomeComponent } from './components/home/home.component';
 import { LoginComponent } from './components/login/login.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
+import { PhotosComponent } from './components/photos/photos.component';
 import { RegistrationComponent } from './components/registration/registration.component';
+import { UploaderComponent } from './components/uploader/uploader.component';
 import { EventAdminComponent } from './components/userPanels/event-admin/event-admin.component';
 import { EventsComponent } from './components/userPanels/events/events.component';
 import { ServiceProviderComponent } from './components/userPanels/service-provider/service-provider.component';
 import { UsersEventsComponent } from './components/users-events-list/users-events-list.component';
+import { NgDropFilesDirective } from './directives/ng-drop-files.directive';
+import { RolePipe } from './pipes/role.pipe';
 import { EventsService } from './services/events.service';
+import { ImageUploaderService } from './services/image-uploader.service';
 import { LoginService } from './services/login.service';
 import { RegistrationService } from './services/registration.service';
 import { RoleRouterService } from './services/role-router.service';
@@ -39,7 +44,11 @@ import { UserService } from './services/user.service';
     EventAdminComponent,
     RegistrationComponent,
     ServiceProviderComponent,
-    UsersEventsComponent
+    UsersEventsComponent,
+    RolePipe,
+    PhotosComponent,
+    UploaderComponent,
+    NgDropFilesDirective
   ],
   imports: [
     APP_ROUTING,
@@ -47,7 +56,9 @@ import { UserService } from './services/user.service';
     BrowserModule,
     HttpClientModule,
     AngularFireAuthModule,
-    ToastrModule.forRoot(),
+    ToastrModule.forRoot({
+      positionClass: 'toast-bottom-right'
+    }),
     AngularFirestoreModule,
     BrowserAnimationsModule,
     AngularFireStorageModule,
@@ -59,7 +70,8 @@ import { UserService } from './services/user.service';
     LoginService,
     EventsService,
     RoleRouterService,
-    RegistrationService
+    RegistrationService,
+    ImageUploaderService
   ],
   bootstrap: [AppComponent]
 })

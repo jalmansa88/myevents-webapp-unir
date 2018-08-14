@@ -1,4 +1,10 @@
-<h1 class="text-center text-primary"><strong>My Events</strong></h1>
+<div class="row justify-content-center">
+    <h1 class="text-center text-primary"><strong>My Events</strong></h1>
+</div>
+<div class="row justify-content-center">
+    <h3 *ngIf="user" class="text-center text-primary"><strong>[{{user.role | role | uppercase}}]</strong></h3>
+</div>
+
 <div class="row">
     <table class="table">
         <thead>
@@ -14,9 +20,9 @@
                 <td>{{event.description}}</td>
                 <td>
                     <div class="btn-group">
-                        <button class="btn btn-outline-primary">See Images</button>
+                        <button [routerLink]="['/images']" [queryParams]="{ eventuid: event.uid }" class="btn btn-outline-primary">See Images</button>
                         <button *ngIf="user?.role !== 0" (click)="unsubscribeUserFromEvent(i)" type="button" class="btn btn-outline-danger">Unsubscribe</button>
-                        <button *ngIf="user.role === 3" [routerLink]="['/eventadmin', event.uid]" class="btn btn-outline-secondary">Administrar Usuarios</button>
+                        <button *ngIf="user.role === 3" [routerLink]="['/eventadmin', event.uid ]" class="btn btn-outline-secondary">Administrar Usuarios</button>
                     </div>
                 </td>
             </tr>
