@@ -1,33 +1,51 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { AngularFirestore, AngularFirestoreCollection } from 'angularfire2/firestore';
+import { AngularFirestore } from 'angularfire2/firestore';
 import { Observable } from 'rxjs';
 
 import { Imagen } from '../../interfaces/image.interface';
+import { LoginService } from '../../services/login.service';
 
 @Component({
   selector: 'app-photos',
   templateUrl: './photos.component.html',
-  styleUrls: []
+  styleUrls: ['./photos.component.css']
 })
 export class PhotosComponent implements OnInit {
-  private itemsCollection: AngularFirestoreCollection<Imagen>;
+  // private imagesCollection: AngularFirestoreCollection<Imagen>;
 
-  items: Observable<Imagen[]>;
+  event_uid: string;
+  images: Observable<Imagen[]>;
 
   constructor(
     private afs: AngularFirestore,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    public loginService: LoginService
   ) {}
 
   ngOnInit() {
-    const event_uid = this.activatedRoute.snapshot.queryParams.eventuid;
+    this.event_uid = this.activatedRoute.snapshot.queryParams.eventuid;
     // const event_uid = this.activatedRoute.snapshot.params['eventuid'];
 
-    this.itemsCollection = this.afs.collection<Imagen>('img', ref =>
-      ref.where('event_uid', '==', event_uid)
-    );
+    this.images = this.afs
+      .collection<Imagen>('img', ref =>
+        ref.where('event_uid', '==', this.event_uid)
+      )
+      .valueChanges();
+  }
 
-    this.items = this.itemsCollection.valueChanges();
+  toggleVip(imagen: Imagen) {
+    const imgRef = this.afs.collection<Imagen>('img');
+
+    imgRef.ref
+      .where('url', '==', imagen.url)
+      .get()
+      .then((result: any) => {
+        return imgRef.doc(result.docs[0].id).update({ isVip: !imagen.isVip });
+      })
+      .then(() => {
+        console.log('updated permission');
+      })
+      .catch(err => {});
   }
 }

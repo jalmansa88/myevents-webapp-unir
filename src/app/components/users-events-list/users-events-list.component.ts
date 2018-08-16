@@ -50,6 +50,8 @@ export class UsersEventsComponent implements OnInit {
     return this.userService
       .delete(this.users[i].uid)
       .then(result => {
+        console.log('borrado user');
+
         this.toastService.success('Usuario eliminado del evento correctamente');
         this.users.splice(i, 1);
       })
@@ -59,9 +61,14 @@ export class UsersEventsComponent implements OnInit {
   }
 
   unsubscribeFromEvent(i: number) {
-    this.eventService.unsubscribeUserFromEvent(
-      this.users[i].uid,
-      this.event_uid
-    );
+    this.eventService
+      .unsubscribeUserFromEvent(this.users[i].uid, this.event_uid)
+      .then(result => {
+        this.toastService.success('Usuario dado de baja correctamente');
+        this.users.splice(i, 1);
+      })
+      .catch(err => {
+        this.toastService.error('Error dando de baja al User: ' + err);
+      });
   }
 }

@@ -1,8 +1,14 @@
+<app-uploader *ngIf="loginService.user?.role === 3" [event_uid]="event_uid"></app-uploader>
 <div class="card-columns">
-    <div class="card" *ngFor="let item of items | async">
-        <img class="card-img-top" [src]="item.url">
-        <div class="card-body">
-            <h5 class="card-title">{{item.nombre}}</h5>
+    <div class="card" *ngFor="let image of images | async">
+        <div *ngIf="!image.isVip || (image.isVip && loginService.user?.role >= 2)">
+            <img class="card-img-top" [src]="image.url">
+            <div class="card-body">
+                <h5 class="card-title">{{image.nombre}}</h5>
+                <div *ngIf="loginService.user?.role === 3">
+                    VIP : <input [checked]="image.isVip" (change)="toggleVip(image)" type="checkbox">
+                </div>
+            </div>
         </div>
     </div>
 </div>

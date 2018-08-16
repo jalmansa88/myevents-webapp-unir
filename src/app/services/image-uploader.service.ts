@@ -18,27 +18,30 @@ export class ImageUploaderService {
   ) {}
 
   uploadToFirebase(imagenes: FileItem[], event_uid: string) {
+    console.log(imagenes);
+
     const storageRef = firebase.storage().ref();
 
-    for (const item of imagenes) {
-      item.estaSubiendo = true;
+    for (const image of imagenes) {
+      image.estaSubiendo = true;
 
-      if (item.progreso >= 100) {
+      if (image.progreso >= 100) {
         continue;
       }
 
       const refImagen = storageRef.child(
-        `${this.CARPETA_IMAGENES}/${item.nombreArchivo}`
+        `${this.CARPETA_IMAGENES}/${image.nombreArchivo}`
       );
       const uploadTask: firebase.storage.UploadTask = refImagen.put(
-        item.archivo
+        image.archivo
       );
 
       uploadTask.on(
         firebase.storage.TaskEvent.STATE_CHANGED,
-        (snapshot: firebase.storage.UploadTaskSnapshot) =>
-          (item.progreso =
-            (snapshot.bytesTransferred / snapshot.totalBytes) * 100),
+        (snapshot: firebase.storage.UploadTaskSnapshot) => {
+          image.progreso =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        },
         error => {
           this.toastService.error('Error al subir imagenes');
           console.error(error);
@@ -46,12 +49,16 @@ export class ImageUploaderService {
         () => {
           refImagen.getDownloadURL().then(urlImagen => {
             this.toastService.success('Imagen cargada correctamente');
-            item.url = urlImagen;
-            item.estaSubiendo = false;
+
+            image.url = urlImagen;
+
+            image.estaSubiendo = false;
+
             this.guardarImagen({
-              nombre: item.nombreArchivo,
-              url: item.url,
-              event_uid: event_uid
+              nombre: image.nombreArchivo,
+              url: image.url,
+              event_uid: event_uid,
+              isVip: image.isVip
             });
           });
         }

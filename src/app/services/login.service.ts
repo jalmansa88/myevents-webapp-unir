@@ -129,6 +129,10 @@ export class LoginService implements OnDestroy {
     });
   }
 
+  async isAdmin() {
+    return this.user && this.user.role === 3;
+  }
+
   ngOnDestroy(): void {
     this.logout();
   }

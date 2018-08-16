@@ -13,6 +13,7 @@ export class NgDropFilesDirective {
 
   constructor() {}
 
+  // Events in this class, are not related to our Events, but Angular Events.
   @HostListener('dragover', ['$event'])
   public onDragEnter(event: any) {
     this.mouseOver.emit(true);

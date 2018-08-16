@@ -37,27 +37,28 @@ export class UserService {
     });
   }
 
-  findByEventUid(event_uid: string) {
+  async findByEventUid(event_uid: string) {
     const users: any[] = [];
+
     return new Promise((resolve, reject) => {
       this.db
-        .collection('attendees', ref => ref.where('event_uid', '==', event_uid))
-        .snapshotChanges()
-        .subscribe((attendeesSnaps: any) => {
-          attendeesSnaps.forEach((attendeeSnapshot: any) => {
+        .collection('attendees')
+        .ref.where('event_uid', '==', event_uid)
+        .get()
+        .then(attendees => {
+          attendees.forEach((attendee: any) => {
             this.db
               .collection('users')
-              .doc(attendeeSnapshot.payload.doc.data().user_uid)
-              .valueChanges()
-              .subscribe((user: any) => {
-                console.log(
-                  'user find by event uid',
-                  attendeeSnapshot.payload.doc.data().user_uid
-                );
-                console.log('user found', user);
+              .doc(attendee.data().user_uid)
+              .ref.get()
+              .then((user: any) => {
+                const userAttendee = user.data();
+                userAttendee.uid = attendee.data().user_uid;
 
-                user.uid = attendeeSnapshot.payload.doc.data().user_uid;
-                users.push(user);
+                users.push(userAttendee);
+              })
+              .catch(err => {
+                reject(err);
               });
           });
         });

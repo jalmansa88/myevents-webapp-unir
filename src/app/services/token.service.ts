@@ -37,21 +37,6 @@ export class TokenService {
         });
     });
   }
-  // findToken(tokenValueToFind: string): Promise<any> {
-  //   return new Promise((resolve, reject) => {
-  //     this.db
-  //       .collection('tokens', ref =>
-  //         ref.where('value', '==', tokenValueToFind).limit(1)
-  //       )
-  //       .valueChanges()
-  //       .subscribe(
-  //         response =>
-  //           response.length !== 0
-  //             ? resolve(response[0])
-  //             : reject('invalid token')
-  //       );
-  //   });
-  // }
 
   generate(eventId: string, role: number) {
     const baseUrl =
@@ -70,6 +55,4 @@ export class TokenService {
       resolve(this.http.get(baseUrl, { params: params }).toPromise());
     });
   }
-
-  generateForTemporalAccess(eventId: string, minutes: number) {}
 }

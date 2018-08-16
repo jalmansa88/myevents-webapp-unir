@@ -4,11 +4,13 @@ export class FileItem {
   public url: string;
   public estaSubiendo: boolean;
   public progreso: number;
+  public isVip: boolean;
 
   constructor(archivo: File) {
     this.archivo = archivo;
     this.nombreArchivo = archivo.name;
     this.estaSubiendo = false;
     this.progreso = 0;
+    this.isVip = false;
   }
 }
