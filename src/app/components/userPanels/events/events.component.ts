@@ -27,7 +27,7 @@ export class EventsComponent implements OnInit, AfterContentChecked {
     private eventService: EventsService,
     private tokenService: TokenService,
     private toastService: ToastrService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.dataRecovered = false;
@@ -40,8 +40,9 @@ export class EventsComponent implements OnInit, AfterContentChecked {
       //   this.router.navigate(['home']);
       // }
 
-      if (this.user && this.user.role === 0) {
-        this.eventService.findByUid(this.user.events).then((result: any[]) => {
+      if (this.user && !this.user.email) {
+        // is anonymouse
+        this.eventService.findByUid(this.user.guestEvent).then((result: any[]) => {
           this.events = result;
         });
       } else if (this.user) {
@@ -63,12 +64,13 @@ export class EventsComponent implements OnInit, AfterContentChecked {
       this.user = this.loginService.user;
     }
     if (
+      // is anonymous case
       this.user &&
-      this.user.role === 0 &&
+      !this.user.email &&
       !this.events &&
       !this.dataRecovered
     ) {
-      this.eventService.findByUid(this.user.events).then((result: any[]) => {
+      this.eventService.findByUid(this.user.guestEvent).then((result: any[]) => {
         this.events = new Array(result);
       });
 
@@ -93,7 +95,8 @@ export class EventsComponent implements OnInit, AfterContentChecked {
       .then(token => {
         return this.eventService.addAttendeeToEvent(
           this.user.uid,
-          token.eventId
+          token.eventId,
+          token.role
         );
       })
       .then((result: any) => {
@@ -113,6 +116,6 @@ export class EventsComponent implements OnInit, AfterContentChecked {
       .then(result => {
         this.events = this.events.filter(event => event.uid !== event_uid);
       })
-      .catch(err => {});
+      .catch(err => { });
   }
 }

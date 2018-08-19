@@ -16,7 +16,7 @@
             </li>
         </ul>
         <div class="nav-item mr-3">
-            <span *ngIf="loginService.user" class="text-white">[{{loginService.user.role | role | uppercase}}] Hola, {{loginService.user.firstname}}</span>
+            <span *ngIf="loginService.user" class="text-white">Hola, {{loginService.user.firstname}}</span>
         </div>
         <button (click)="logout()" *ngIf="loginService.user" type="button" class="btn btn-outline-primary btn-sm">Logout</button>
     </div>

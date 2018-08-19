@@ -5,7 +5,6 @@ export interface User {
     email?: string;
     phone?: number;
     password?: string;
-    role?: number;
-    events?: string;
+    guestEvent?: any;
     photoUrl?: string;
 }

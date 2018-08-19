@@ -8,7 +8,7 @@ import { UserService } from './user.service';
   providedIn: 'root'
 })
 export class EventsService {
-  constructor(private db: AngularFirestore, private userService: UserService) {}
+  constructor(private db: AngularFirestore, private userService: UserService) { }
 
   getAll() {
     return this.db
@@ -79,6 +79,7 @@ export class EventsService {
               .then((eventSnap: any) => {
                 const event = eventSnap.data();
                 event.uid = eventSnap.id;
+                event.role = attendeeSnapshot.data().role;
                 events.push(event);
               })
               .catch(err => {
@@ -93,7 +94,7 @@ export class EventsService {
     });
   }
 
-  addAttendeeToEvent(user_uid: string, event_uid: string) {
+  addAttendeeToEvent(user_uid: string, event_uid: string, role: number) {
     return new Promise((resolve, reject) => {
       this.userService
         .findByUid(user_uid)
@@ -116,7 +117,8 @@ export class EventsService {
         .then((event: any) => {
           this.db.collection('attendees').add({
             user_uid: user_uid,
-            event_uid: event_uid
+            event_uid: event_uid,
+            role: role
           });
           const e = event.data();
           e.uid = event.id;

@@ -5,6 +5,8 @@ import { Observable } from 'rxjs';
 
 import { Imagen } from '../../interfaces/image.interface';
 import { LoginService } from '../../services/login.service';
+import { EventsService } from '../../services/events.service';
+import { DownloadService } from '../../download.service';
 
 @Component({
   selector: 'app-photos',
@@ -14,24 +16,35 @@ import { LoginService } from '../../services/login.service';
 export class PhotosComponent implements OnInit {
   // private imagesCollection: AngularFirestoreCollection<Imagen>;
 
+  event: any;
   event_uid: string;
   images: Observable<Imagen[]>;
 
   constructor(
     private afs: AngularFirestore,
+    private eventService: EventsService,
     private activatedRoute: ActivatedRoute,
+    private downloader: DownloadService,
     public loginService: LoginService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.event_uid = this.activatedRoute.snapshot.queryParams.eventuid;
     // const event_uid = this.activatedRoute.snapshot.params['eventuid'];
+
+    this.eventService.findByUid(this.event_uid)
+      .then((result) => {
+        console.log(result);
+        this.event = result;
+      });
 
     this.images = this.afs
       .collection<Imagen>('img', ref =>
         ref.where('event_uid', '==', this.event_uid)
       )
       .valueChanges();
+
+
   }
 
   toggleVip(imagen: Imagen) {
@@ -46,6 +59,6 @@ export class PhotosComponent implements OnInit {
       .then(() => {
         console.log('updated permission');
       })
-      .catch(err => {});
+      .catch(err => { });
   }
 }

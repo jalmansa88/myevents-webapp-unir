@@ -7,7 +7,16 @@ import { User } from '../interfaces/user.interface';
   providedIn: 'root'
 })
 export class UserService {
-  constructor(private db: AngularFirestore) {}
+  constructor(private db: AngularFirestore) { }
+
+  add(user: User) {
+    return this.db.collection('users').add({
+      firstname: user.firstname,
+      lastname: user.lastname,
+      email: user.email,
+      phone: user.phone,
+    });
+  }
 
   findByUid(uid: string) {
     return this.db.collection('users').doc(uid);

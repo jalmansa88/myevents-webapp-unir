@@ -21,17 +21,18 @@ export class RegistrationService {
     private db: AngularFirestore,
     private userService: UserService,
     private eventsService: EventsService
-  ) {}
+  ) { }
 
   withFacebook(formToken: string, user: any): Promise<any> {
     return new Promise<any>((resolve, reject) => {
       this.tokenService
         .findToken(formToken)
         .then(result => {
+          console.log('token result', result);
+
           this.token.role = result.role;
           this.token.value = result.value;
           this.token.eventId = result.eventId;
-          this.token.timestamp = result.timestamp;
         })
         .then(() => {
           return this.afAuth.auth.signInWithPopup(
@@ -49,7 +50,8 @@ export class RegistrationService {
           console.log('saveresponse facebook', saveResponse);
           this.eventsService.addAttendeeToEvent(
             saveResponse.id,
-            this.token.eventId
+            this.token.eventId,
+            this.token.role
           );
         })
         .then(() => {
@@ -67,22 +69,19 @@ export class RegistrationService {
   saveAccountInDBIfNotExist(userInDb: any): Promise<any> {
     return new Promise<any>((accept, reject) => {
       if (!userInDb) {
-        return this.db
-          .collection('users')
-          .add({
-            firstname: this.authData.additionalUserInfo.profile.first_name,
-            lastname: this.authData.additionalUserInfo.profile.last_name,
-            email: this.authData.additionalUserInfo.profile.email,
-            phone: this.authData.user.phonNumber
-              ? this.authData.user.phonNumber
-              : '',
-            role: this.token.role
-          })
-          .then(saveResponse => {
-            console.log('saveresponse', saveResponse);
-          });
+
+        const newUser: User = {
+          firstname: this.authData.additionalUserInfo.profile.first_name,
+          lastname: this.authData.additionalUserInfo.profile.last_name,
+          email: this.authData.additionalUserInfo.profile.email,
+          phone: this.authData.user.phonNumber
+            ? this.authData.user.phonNumber
+            : '',
+        };
+
+        return this.userService.add(newUser);
       } else {
-        reject('email was already registered');
+        reject('Email was already registered.');
       }
     });
   }
@@ -92,7 +91,7 @@ export class RegistrationService {
       .findToken(formToken)
       .then(tokenResult => {
         if (tokenResult.role === 0) {
-          throw new Error('Token temporal no válido para registro');
+          throw new Error('Un Token temporal no es válido para el registro.');
         }
         this.token = {
           value: tokenResult.value,
@@ -107,18 +106,21 @@ export class RegistrationService {
         );
       })
       .then(() => {
-        return this.db.collection('users').add({
+
+        const newUser = {
           firstname: user.firstname,
           lastname: user.lastname,
           email: user.email,
           phone: user.phone,
-          role: this.token.role
-        });
+        };
+
+        return this.userService.add(newUser)
       })
       .then(saveResponse => {
         this.eventsService.addAttendeeToEvent(
           saveResponse.id,
-          this.token.eventId
+          this.token.eventId,
+          this.token.role
         );
       })
       .then(() => {

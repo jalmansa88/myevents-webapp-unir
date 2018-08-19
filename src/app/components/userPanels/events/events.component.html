@@ -1,9 +1,11 @@
 <div class="row justify-content-center">
-    <h1 class="text-center text-primary"><strong>My Events</strong></h1>
+    <h1 class="text-center text-primary">
+        <strong>My Events</strong>
+    </h1>
 </div>
-<div class="row justify-content-center">
+<!-- <div class="row justify-content-center">
     <h3 *ngIf="user" class="text-center text-primary"><strong>[{{user.role | role | uppercase}}]</strong></h3>
-</div>
+</div> -->
 
 <div class="row">
     <table class="table">
@@ -21,8 +23,8 @@
                 <td>
                     <div class="btn-group">
                         <button [routerLink]="['/images']" [queryParams]="{ eventuid: event.uid }" class="btn btn-outline-primary">See Images</button>
-                        <button *ngIf="user?.role !== 0" (click)="unsubscribeUserFromEvent(i)" type="button" class="btn btn-outline-danger">Unsubscribe</button>
-                        <button *ngIf="user.role === 3" [routerLink]="['/eventadmin', event.uid ]" class="btn btn-outline-secondary">Administrar Usuarios</button>
+                        <button *ngIf="event.role !== 0" (click)="unsubscribeUserFromEvent(i)" type="button" class="btn btn-outline-danger">Unsubscribe</button>
+                        <button *ngIf="event.role === 3" [routerLink]="['/eventadmin', event.uid ]" class="btn btn-outline-secondary">Administrar Usuarios</button>
                     </div>
                 </td>
             </tr>
@@ -33,19 +35,19 @@
     <span *ngIf="dataRecovered && (!events || !events.length)" class="alert alert-primary">No event under Subscription :(</span>
 </div>
 <hr>
-<form *ngIf="user?.role > 0 && user?.role <= 2" class="form-group row">
+<form *ngIf="!user.email" class="form-group row">
     <div class="col">
         <span>Subscribe new event</span>
     </div>
     <div class="col">
         <input [(ngModel)]="token" class="form-control" type="text" placeholder="token event" name="token">
     </div>
-    <div *ngIf="user?.role !== 0" class="col">
+    <div *ngIf="!user.email" class="col">
         <button (click)="registerInNewEvent()" class="btn btn-primary" type="button">Subscribe</button>
     </div>
 </form>
-<div *ngIf="user?.role === 0" class="row">
+<!-- <div *ngIf="user?.role === 0" class="row">
     <div class="col justify-content-center">
         <span class="alert alert-warning">¡Acceso temporal! Te quedan N minutos restantes.</span>
     </div>
-</div>
+</div> -->

@@ -115,8 +115,7 @@ export class LoginService implements OnDestroy {
         .then(() => {
           this.user = this.user = {
             firstname: 'Anonymous',
-            role: 0,
-            events: resultToken.eventId
+            guestEvent: resultToken.eventId,
           };
           return this.authUserCheck();
         })
@@ -127,10 +126,6 @@ export class LoginService implements OnDestroy {
           reject(err);
         });
     });
-  }
-
-  async isAdmin() {
-    return this.user && this.user.role === 3;
   }
 
   ngOnDestroy(): void {
