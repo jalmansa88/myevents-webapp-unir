@@ -115,7 +115,7 @@ export class LoginService implements OnDestroy {
         .then(() => {
           this.user = this.user = {
             firstname: 'Anonymous',
-            guestEvent: resultToken.eventId,
+            guestEvent: resultToken.eventId
           };
           return this.authUserCheck();
         })

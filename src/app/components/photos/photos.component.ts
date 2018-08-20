@@ -3,10 +3,10 @@ import { ActivatedRoute } from '@angular/router';
 import { AngularFirestore } from 'angularfire2/firestore';
 import { Observable } from 'rxjs';
 
-import { Imagen } from '../../interfaces/image.interface';
-import { LoginService } from '../../services/login.service';
-import { EventsService } from '../../services/events.service';
 import { DownloadService } from '../../download.service';
+import { Imagen } from '../../interfaces/image.interface';
+import { EventsService } from '../../services/events.service';
+import { LoginService } from '../../services/login.service';
 
 @Component({
   selector: 'app-photos',
@@ -19,6 +19,7 @@ export class PhotosComponent implements OnInit {
   event: any;
   event_uid: string;
   images: Observable<Imagen[]>;
+  role: number;
 
   constructor(
     private afs: AngularFirestore,
@@ -26,17 +27,15 @@ export class PhotosComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private downloader: DownloadService,
     public loginService: LoginService
-  ) { }
+  ) {}
 
   ngOnInit() {
     this.event_uid = this.activatedRoute.snapshot.queryParams.eventuid;
     // const event_uid = this.activatedRoute.snapshot.params['eventuid'];
 
-    this.eventService.findByUid(this.event_uid)
-      .then((result) => {
-        console.log(result);
-        this.event = result;
-      });
+    this.eventService.findByUid(this.event_uid).then(result => {
+      this.event = result;
+    });
 
     this.images = this.afs
       .collection<Imagen>('img', ref =>
@@ -44,7 +43,8 @@ export class PhotosComponent implements OnInit {
       )
       .valueChanges();
 
-
+    this.role = this.loginService.user.eventRolesMap.get(this.event_uid);
+    console.log('role', this.role);
   }
 
   toggleVip(imagen: Imagen) {
@@ -59,6 +59,6 @@ export class PhotosComponent implements OnInit {
       .then(() => {
         console.log('updated permission');
       })
-      .catch(err => { });
+      .catch(err => {});
   }
 }

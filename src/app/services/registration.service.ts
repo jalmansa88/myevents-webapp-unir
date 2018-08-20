@@ -21,7 +21,7 @@ export class RegistrationService {
     private db: AngularFirestore,
     private userService: UserService,
     private eventsService: EventsService
-  ) { }
+  ) {}
 
   withFacebook(formToken: string, user: any): Promise<any> {
     return new Promise<any>((resolve, reject) => {
@@ -69,15 +69,18 @@ export class RegistrationService {
   saveAccountInDBIfNotExist(userInDb: any): Promise<any> {
     return new Promise<any>((accept, reject) => {
       if (!userInDb) {
-
         const newUser: User = {
           firstname: this.authData.additionalUserInfo.profile.first_name,
           lastname: this.authData.additionalUserInfo.profile.last_name,
           email: this.authData.additionalUserInfo.profile.email,
           phone: this.authData.user.phonNumber
             ? this.authData.user.phonNumber
-            : '',
+            : ''
         };
+
+        if (this.token.role === 4) {
+          newUser.isSP = true;
+        }
 
         return this.userService.add(newUser);
       } else {
@@ -106,15 +109,18 @@ export class RegistrationService {
         );
       })
       .then(() => {
-
-        const newUser = {
+        const newUser: User = {
           firstname: user.firstname,
           lastname: user.lastname,
           email: user.email,
-          phone: user.phone,
+          phone: user.phone
         };
 
-        return this.userService.add(newUser)
+        if (this.token.role === 4) {
+          newUser.isSP = true;
+        }
+
+        return this.userService.add(newUser);
       })
       .then(saveResponse => {
         this.eventsService.addAttendeeToEvent(

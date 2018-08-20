@@ -7,14 +7,14 @@ import { User } from '../interfaces/user.interface';
   providedIn: 'root'
 })
 export class UserService {
-  constructor(private db: AngularFirestore) { }
+  constructor(private db: AngularFirestore) {}
 
   add(user: User) {
     return this.db.collection('users').add({
       firstname: user.firstname,
       lastname: user.lastname,
       email: user.email,
-      phone: user.phone,
+      phone: user.phone
     });
   }
 
@@ -63,6 +63,7 @@ export class UserService {
               .then((user: any) => {
                 const userAttendee = user.data();
                 userAttendee.uid = attendee.data().user_uid;
+                userAttendee.role = attendee.data().role;
 
                 users.push(userAttendee);
               })

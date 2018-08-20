@@ -17,6 +17,7 @@ export class EventsComponent implements OnInit, AfterContentChecked {
   user: User;
   events: any[];
   token: string;
+  userToUnsubscribe: number;
   dataRecovered: boolean;
   rendered: boolean;
   userSubscription: Subscription;
@@ -27,7 +28,7 @@ export class EventsComponent implements OnInit, AfterContentChecked {
     private eventService: EventsService,
     private tokenService: TokenService,
     private toastService: ToastrService
-  ) { }
+  ) {}
 
   ngOnInit() {
     this.dataRecovered = false;
@@ -41,10 +42,12 @@ export class EventsComponent implements OnInit, AfterContentChecked {
       // }
 
       if (this.user && !this.user.email) {
-        // is anonymouse
-        this.eventService.findByUid(this.user.guestEvent).then((result: any[]) => {
-          this.events = result;
-        });
+        // is anonymous
+        this.eventService
+          .findByUid(this.user.guestEvent)
+          .then((result: any[]) => {
+            this.events = result;
+          });
       } else if (this.user) {
         this.eventService
           .findByUserUid(this.user.uid)
@@ -70,9 +73,11 @@ export class EventsComponent implements OnInit, AfterContentChecked {
       !this.events &&
       !this.dataRecovered
     ) {
-      this.eventService.findByUid(this.user.guestEvent).then((result: any[]) => {
-        this.events = new Array(result);
-      });
+      this.eventService
+        .findByUid(this.user.guestEvent)
+        .then((result: any[]) => {
+          this.events = new Array(result);
+        });
 
       this.dataRecovered = true;
     }
@@ -109,13 +114,18 @@ export class EventsComponent implements OnInit, AfterContentChecked {
       });
   }
 
-  unsubscribeUserFromEvent(i: number) {
-    const event_uid = this.events[i].uid;
+  unsubscribeUserFromEvent() {
+    const event_uid = this.events[this.userToUnsubscribe].uid;
     this.eventService
       .unsubscribeUserFromEvent(this.user.uid, event_uid)
       .then(result => {
+        this.toastService.success('Dado de baja del Evento correctamente');
         this.events = this.events.filter(event => event.uid !== event_uid);
       })
-      .catch(err => { });
+      .catch(err => {});
+  }
+
+  setUserToDelete(index: number) {
+    this.userToUnsubscribe = index;
   }
 }
