@@ -43,7 +43,9 @@ export class PhotosComponent implements OnInit {
       )
       .valueChanges();
 
-    this.role = this.loginService.user.eventRolesMap.get(this.event_uid);
+    const rolesMap = this.loginService.user.eventRolesMap;
+    
+    rolesMap ? (this.role = rolesMap.get(this.event_uid)) : (this.role = 0);
     console.log('role', this.role);
   }
 

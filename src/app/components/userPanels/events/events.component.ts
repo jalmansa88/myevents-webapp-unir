@@ -34,12 +34,16 @@ export class EventsComponent implements OnInit, AfterContentChecked {
     this.dataRecovered = false;
     this.rendered = false;
 
+    console.log('user en events', this.user);
+
     this.userSubscription = this.loginService.userObservable.subscribe(user => {
       this.user = user;
 
       // if (!this.user) {
       //   this.router.navigate(['home']);
       // }
+
+      console.log('user en events subscriber', this.user);
 
       if (this.user && !this.user.email) {
         // is anonymous

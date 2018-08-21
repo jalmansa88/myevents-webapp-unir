@@ -15,7 +15,7 @@
             <td><input [(ngModel)]="user.firstname" [value]="user.firstname"></td>
             <td><input [(ngModel)]="user.lastname" [value]="user.lastname"></td>
             <td><input [(ngModel)]="user.email" [value]="user.email"></td>
-            <td>{{user.role}}</td>
+            <td>{{user.role | role}}</td>
             <td class="btn-group">
                 <button (click)="update(user)" class="btn btn-warning">Update</button>
                 <button type="button" (click)="setUserToDelete(i)" class="btn btn-danger" data-toggle="modal" data-target="#unsubscribeModal" [disabled]="user.email === loginService?.user?.email">Unsubscribe from this event</button>
