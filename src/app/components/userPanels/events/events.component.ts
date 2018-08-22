@@ -17,6 +17,7 @@ export class EventsComponent implements OnInit, AfterContentChecked {
   user: User;
   events: any[];
   token: string;
+  userToUnsubscribe: number;
   dataRecovered: boolean;
   rendered: boolean;
   userSubscription: Subscription;
@@ -33,6 +34,8 @@ export class EventsComponent implements OnInit, AfterContentChecked {
     this.dataRecovered = false;
     this.rendered = false;
 
+    console.log('user en events', this.user);
+
     this.userSubscription = this.loginService.userObservable.subscribe(user => {
       this.user = user;
 
@@ -40,10 +43,15 @@ export class EventsComponent implements OnInit, AfterContentChecked {
       //   this.router.navigate(['home']);
       // }
 
-      if (this.user && this.user.role === 0) {
-        this.eventService.findByUid(this.user.events).then((result: any[]) => {
-          this.events = result;
-        });
+      console.log('user en events subscriber', this.user);
+
+      if (this.user && !this.user.email) {
+        // is anonymous
+        this.eventService
+          .findByUid(this.user.guestEvent)
+          .then((result: any[]) => {
+            this.events = result;
+          });
       } else if (this.user) {
         this.eventService
           .findByUserUid(this.user.uid)
@@ -63,14 +71,17 @@ export class EventsComponent implements OnInit, AfterContentChecked {
       this.user = this.loginService.user;
     }
     if (
+      // is anonymous case
       this.user &&
-      this.user.role === 0 &&
+      !this.user.email &&
       !this.events &&
       !this.dataRecovered
     ) {
-      this.eventService.findByUid(this.user.events).then((result: any[]) => {
-        this.events = new Array(result);
-      });
+      this.eventService
+        .findByUid(this.user.guestEvent)
+        .then((result: any[]) => {
+          this.events = new Array(result);
+        });
 
       this.dataRecovered = true;
     }
@@ -93,7 +104,8 @@ export class EventsComponent implements OnInit, AfterContentChecked {
       .then(token => {
         return this.eventService.addAttendeeToEvent(
           this.user.uid,
-          token.eventId
+          token.eventId,
+          token.role
         );
       })
       .then((result: any) => {
@@ -106,13 +118,18 @@ export class EventsComponent implements OnInit, AfterContentChecked {
       });
   }
 
-  unsubscribeUserFromEvent(i: number) {
-    const event_uid = this.events[i].uid;
+  unsubscribeUserFromEvent() {
+    const event_uid = this.events[this.userToUnsubscribe].uid;
     this.eventService
       .unsubscribeUserFromEvent(this.user.uid, event_uid)
       .then(result => {
+        this.toastService.success('Dado de baja del Evento correctamente');
         this.events = this.events.filter(event => event.uid !== event_uid);
       })
       .catch(err => {});
+  }
+
+  setUserToDelete(index: number) {
+    this.userToUnsubscribe = index;
   }
 }

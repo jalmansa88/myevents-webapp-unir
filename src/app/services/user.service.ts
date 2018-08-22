@@ -9,6 +9,15 @@ import { User } from '../interfaces/user.interface';
 export class UserService {
   constructor(private db: AngularFirestore) {}
 
+  add(user: User) {
+    return this.db.collection('users').add({
+      firstname: user.firstname,
+      lastname: user.lastname,
+      email: user.email,
+      phone: user.phone
+    });
+  }
+
   findByUid(uid: string) {
     return this.db.collection('users').doc(uid);
   }
@@ -54,6 +63,7 @@ export class UserService {
               .then((user: any) => {
                 const userAttendee = user.data();
                 userAttendee.uid = attendee.data().user_uid;
+                userAttendee.role = attendee.data().role;
 
                 users.push(userAttendee);
               })

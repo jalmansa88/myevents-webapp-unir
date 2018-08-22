@@ -67,4 +67,8 @@ export class ServiceProviderComponent implements OnInit {
         this.toastService.error(err);
       });
   }
+
+  cancel(event: any) {
+    this.events.pop();
+  }
 }

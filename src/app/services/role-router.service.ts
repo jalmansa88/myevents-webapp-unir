@@ -10,12 +10,10 @@ export class RoleRouterService {
   constructor(private router: Router) {}
 
   routeUser(user: User) {
-    if (user.role <= 3) {
-      this.router.navigate(['events']);
-    } else if (user.role === 4) {
+    if (user.isSP) {
       this.router.navigate(['serviceprovider']);
     } else {
-      console.error('Rol no válido');
+      this.router.navigate(['events']);
     }
   }
 }
