@@ -44,9 +44,9 @@ export class EventAdminComponent implements OnInit {
   ngOnInit() {
     this.user = this.loginService.user;
 
-    // if (!this.user) {
-    //   this.router.navigate(['home']);
-    // }
+    if (!this.user) {
+      this.router.navigate(['home']);
+    }
     this.activatedRoute.params.subscribe(params => {
       this.eventsService
         .findByUid(params.uid)

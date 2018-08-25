@@ -28,9 +28,9 @@ export class ServiceProviderComponent implements OnInit {
   }
 
   ngOnInit() {
-    // if (!this.user) {
-    //   this.router.navigate(['home']);
-    // }
+    if (!this.user) {
+      this.router.navigate(['home']);
+    }
 
     this.eventService.getAll().subscribe((result: any) => {
       this.events = result;

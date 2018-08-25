@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AngularFirestore } from 'angularfire2/firestore';
 import { Observable } from 'rxjs';
 
@@ -26,10 +26,15 @@ export class PhotosComponent implements OnInit {
     private eventService: EventsService,
     private activatedRoute: ActivatedRoute,
     private downloader: DownloadService,
-    public loginService: LoginService
+    public loginService: LoginService,
+    public router: Router
   ) {}
 
   ngOnInit() {
+    if (!this.loginService.user) {
+      this.router.navigate(['home']);
+    }
+
     this.event_uid = this.activatedRoute.snapshot.queryParams.eventuid;
     // const event_uid = this.activatedRoute.snapshot.params['eventuid'];
 
@@ -44,7 +49,7 @@ export class PhotosComponent implements OnInit {
       .valueChanges();
 
     const rolesMap = this.loginService.user.eventRolesMap;
-    
+
     rolesMap ? (this.role = rolesMap.get(this.event_uid)) : (this.role = 0);
     console.log('role', this.role);
   }
