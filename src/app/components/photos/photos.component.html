@@ -8,23 +8,33 @@
             </h1>
         </div>
     </div>
-    <div *ngIf="!(images | async)" class="row mt-3 justify-content-center">
+    <div *ngIf="(images | async)?.length == 0" class="row mt-3 justify-content-center">
         <div class="col-auto alert alert-info">
             <span>No hay imágenes en este evento!</span>
         </div>
     </div>
     <div class="card-columns mt-3">
-        <div class="card" *ngFor="let image of images | async">
-            <div *ngIf="!image.isVip || (image.isVip && role >= 2)">
+        <div *ngFor="let image of images | async">
+            <div *ngIf="!image.isVip || (image.isVip && role >= 2)" class="card" [ngClass]="{'border-success border-3': image.isVip}">
                 <img class="card-img-top" [src]="image.url">
                 <div class="card-body">
                     <h5 class="card-title">{{image.nombre}}</h5>
-                    <div *ngIf="role === 3">
-                        VIP :
-                        <input [checked]="image.isVip" (change)="toggleVip(image)" type="checkbox">
+
+                </div>
+                <div class="card-footer bg-transparent">
+                    <div *ngIf="role === 3" class="row justify-content-between">
+                        <div class="col-auto">
+                            <label class="mt-1 mr-1">VIP:</label>
+                            <label class="switch">
+                                <input (change)="toggleVip(image)" [checked]="image.isVip" type="checkbox" class="success form-check-input">
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                        <div class="col-auto">
+                            <button (click)="deleteImage(image)" class="btn btn-outline-danger">Delete</button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>

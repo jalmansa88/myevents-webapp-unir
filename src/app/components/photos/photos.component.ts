@@ -30,6 +30,8 @@ export class PhotosComponent implements OnInit {
     public router: Router
   ) {}
 
+  readonly imgRef = this.afs.collection<Imagen>('img');
+
   ngOnInit() {
     if (!this.loginService.user) {
       this.router.navigate(['home']);
@@ -55,17 +57,19 @@ export class PhotosComponent implements OnInit {
   }
 
   toggleVip(imagen: Imagen) {
-    const imgRef = this.afs.collection<Imagen>('img');
-
-    imgRef.ref
+    this.imgRef.ref
       .where('url', '==', imagen.url)
       .get()
       .then((result: any) => {
-        return imgRef.doc(result.docs[0].id).update({ isVip: !imagen.isVip });
+        return this.imgRef
+          .doc(result.docs[0].id)
+          .update({ isVip: !imagen.isVip });
       })
       .then(() => {
         console.log('updated permission');
       })
       .catch(err => {});
   }
+
+  deleteImage(image) {}
 }

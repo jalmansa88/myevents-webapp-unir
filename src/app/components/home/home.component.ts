@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 
+import { User } from '../../interfaces/user.interface';
 import { LoginService } from '../../services/login.service';
 import { RoleRouterService } from '../../services/role-router.service';
 
@@ -12,16 +13,25 @@ import { RoleRouterService } from '../../services/role-router.service';
 export class HomeComponent implements OnInit {
   isLoginWithEmail = false;
   tempToken: string;
+  user: User;
+  userObservable;
 
   constructor(
     public loginService: LoginService,
     private roleRouterService: RoleRouterService,
     private toastService: ToastrService
-  ) {}
+  ) {
+    this.userObservable = loginService.userObservable.subscribe(user => {
+      this.user = user;
+      if (this.loginService.user) {
+        this.roleRouterService.routeUser(this.loginService.user);
+      }
+    });
+  }
 
   ngOnInit() {
-    if (this.loginService.user) {
-      this.roleRouterService.routeUser(this.loginService.user);
+    if (this.user) {
+      this.roleRouterService.routeUser(this.user);
     }
   }
 
