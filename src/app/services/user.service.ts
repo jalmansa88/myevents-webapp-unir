@@ -10,12 +10,11 @@ export class UserService {
   constructor(private db: AngularFirestore) {}
 
   add(user: User) {
-    return this.db.collection('users').add({
-      firstname: user.firstname,
-      lastname: user.lastname,
-      email: user.email,
-      phone: user.phone
-    });
+    // return this.db.collection('users').add(user);
+    return this.db
+      .collection('users')
+      .doc(user.email)
+      .set(user);
   }
 
   findByUid(uid: string) {

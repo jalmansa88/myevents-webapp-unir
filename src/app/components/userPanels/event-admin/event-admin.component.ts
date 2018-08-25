@@ -70,6 +70,8 @@ export class EventAdminComponent implements OnInit {
         this.token = result.token;
       })
       .catch(err => {
+        console.log(err);
+
         delete event.loading;
         this.toastService.error(err);
       });

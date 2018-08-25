@@ -28,4 +28,14 @@
         </tr>
     </tbody>
 </table>
-<button (click)="newEvent()" type="button" class="btn btn-outline-dark">New Event</button>
+<div class="row justify-content-around">
+    <div class="col">
+        <button (click)="newEvent()" type="button" class="btn btn-outline-dark">New Event</button>
+    </div>
+    <div class="col-auto">
+        <div class="btn btn-group">
+            <input value="{{sptoken}}" type="text" readonly>
+            <button (click)="generateSPToken()" class="btn btn-outline-info">Service Provider Token</button>
+        </div>
+    </div>
+</div>

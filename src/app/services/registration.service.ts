@@ -78,6 +78,8 @@ export class RegistrationService {
             : ''
         };
 
+        console.log('token', this.token);
+
         if (this.token.role === 4) {
           newUser.isSP = true;
         }
@@ -116,18 +118,24 @@ export class RegistrationService {
           phone: user.phone
         };
 
+        console.log(this.token.role === 4);
+
         if (this.token.role === 4) {
           newUser.isSP = true;
         }
 
+        console.log(newUser);
+
         return this.userService.add(newUser);
       })
-      .then(saveResponse => {
-        this.eventsService.addAttendeeToEvent(
-          saveResponse.id,
-          this.token.eventId,
-          this.token.role
-        );
+      .then(() => {
+        if (this.token.role !== 4) {
+          this.eventsService.addAttendeeToEvent(
+            user.email,
+            this.token.eventId,
+            this.token.role
+          );
+        }
       })
       .then(() => {
         return this.afAuth.auth.signOut();

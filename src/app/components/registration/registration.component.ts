@@ -69,6 +69,7 @@ export class RegistrationComponent implements OnInit {
 
         this.toastService.success('Registro satisfactoio');
         this.loading = false;
+        this.loginService.logout();
         this.router.navigate(['home']);
       })
       .catch(err => {
