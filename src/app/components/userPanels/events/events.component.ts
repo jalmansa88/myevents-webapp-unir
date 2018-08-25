@@ -39,9 +39,9 @@ export class EventsComponent implements OnInit, AfterContentChecked {
     this.userSubscription = this.loginService.userObservable.subscribe(user => {
       this.user = user;
 
-      // if (!this.user) {
-      //   this.router.navigate(['home']);
-      // }
+      if (!this.user) {
+        this.router.navigate(['home']);
+      }
 
       console.log('user en events subscriber', this.user);
 
