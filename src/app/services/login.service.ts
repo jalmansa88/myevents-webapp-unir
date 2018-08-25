@@ -107,7 +107,7 @@ export class LoginService implements OnDestroy {
         .then((tokenResponse: any) => {
           resultToken = tokenResponse;
           if (resultToken.role !== 0) {
-            reject('Not a temporal token');
+            throw 'Not a temporal token';
           } else {
             return this.afAuth.auth.signInAnonymously();
           }
@@ -115,8 +115,7 @@ export class LoginService implements OnDestroy {
         .then(() => {
           this.user = this.user = {
             firstname: 'Anonymous',
-            role: 0,
-            events: resultToken.eventId
+            guestEvent: resultToken.eventId
           };
           return this.authUserCheck();
         })

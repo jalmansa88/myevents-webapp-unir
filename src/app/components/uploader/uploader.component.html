@@ -1,14 +1,14 @@
 <div class="row">
     <div class="col-md-4">
-        <h3>Seleccione Imágenes</h3>
+        <h2>Seleccione Imágenes</h2>
         <div appNgDropFiles [files]="files" (mouseOver)="overDrop = $event" [ngClass]="{'file-over': overDrop}" class="well drop-zone">
-            <h4>Arrastre aqui las imágenes</h4>
+            <h5>Arrastre aqui las imágenes</h5>
             <img src="assets/drop-images.png" alt="">
         </div>
     </div>
     <div class="col-md-8">
         <h4>Cargar Imágenes</h4>
-        <button (click)="cargarImagenes()" [disabled]="files.length === 0" class="btn btn-success">Subir</button>
+        <button (click)="cargarImagenes()" [disabled]="files.length === 0" class="btn btn-success mr-3">Subir</button>
         <button (click)="limpiarArchivos()" class="btn btn-danger">Limpiar</button>
 
         <table class="table">
@@ -17,6 +17,7 @@
                     <th>Nombre</th>
                     <th>Tamaño</th>
                     <th>Progreso</th>
+                    <th>VIP</th>
                 </tr>
             </thead>
             <tbody>
@@ -27,6 +28,9 @@
                         <div class="progress">
                             <div class="progress-bar" role="progressbar" [ngStyle]="{'width': file.progreso + '%'}" aria-valuenow="file.progreso" aria-valuemin="0" aria-valuemax="100">{{file.progreso}} %</div>
                         </div>
+                    </td>
+                    <td>
+                        <input [checked]="file.isVip" (change)="file.isVip = !file.isVip" type="checkbox">
                     </td>
                 </tr>
             </tbody>

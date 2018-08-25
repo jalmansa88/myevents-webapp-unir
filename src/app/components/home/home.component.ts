@@ -4,12 +4,10 @@ import { ToastrService } from 'ngx-toastr';
 import { LoginService } from '../../services/login.service';
 import { RoleRouterService } from '../../services/role-router.service';
 
-declare var $;
-
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
-  styleUrls: []
+  styleUrls: ['../registration/registration.component.css']
 })
 export class HomeComponent implements OnInit {
   isLoginWithEmail = false;

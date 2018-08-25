@@ -15,6 +15,7 @@ import { TokenService } from '../../../services/token.service';
 export class ServiceProviderComponent implements OnInit {
   user: User;
   events: any[];
+  sptoken: string;
 
   constructor(
     private loginService: LoginService,
@@ -60,11 +61,24 @@ export class ServiceProviderComponent implements OnInit {
     this.events.pop();
     this.eventService
       .save(event)
-      .then(result => {
-        // this.events.push(result);
-      })
+      .then(result => {})
       .catch(err => {
         this.toastService.error(err);
+      });
+  }
+
+  cancel(event: any) {
+    this.events.pop();
+  }
+
+  generateSPToken() {
+    this.tokenService
+      .generate(null, 4)
+      .then((result: any) => {
+        this.sptoken = result.token;
+      })
+      .catch(err => {
+        this.toastService.error(err.error);
       });
   }
 }

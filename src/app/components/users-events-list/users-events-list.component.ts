@@ -3,6 +3,7 @@ import { ToastrService } from 'ngx-toastr';
 
 import { User } from '../../interfaces/user.interface';
 import { EventsService } from '../../services/events.service';
+import { LoginService } from '../../services/login.service';
 import { UserService } from '../../services/user.service';
 
 @Component({
@@ -14,12 +15,15 @@ export class UsersEventsComponent implements OnInit {
   @Input()
   event_uid: string;
 
-  users: User[] = [];
+  // attendee
+  users: any[] = [];
+  indexToDelete: number;
 
   constructor(
     private userService: UserService,
     private eventService: EventsService,
-    private toastService: ToastrService
+    private toastService: ToastrService,
+    public loginService: LoginService
   ) {}
 
   ngOnInit() {
@@ -46,10 +50,13 @@ export class UsersEventsComponent implements OnInit {
       });
   }
 
+  // No se usa por ahora. Se hace desuscribe
   delete(i: number) {
     return this.userService
       .delete(this.users[i].uid)
       .then(result => {
+        console.log('borrado user');
+
         this.toastService.success('Usuario eliminado del evento correctamente');
         this.users.splice(i, 1);
       })
@@ -58,10 +65,22 @@ export class UsersEventsComponent implements OnInit {
       });
   }
 
-  unsubscribeFromEvent(i: number) {
-    this.eventService.unsubscribeUserFromEvent(
-      this.users[i].uid,
-      this.event_uid
-    );
+  unsubscribeFromEvent() {
+    this.eventService
+      .unsubscribeUserFromEvent(
+        this.users[this.indexToDelete].uid,
+        this.event_uid
+      )
+      .then(result => {
+        this.toastService.success('Usuario dado de baja correctamente');
+        this.users.splice(this.indexToDelete, 1);
+      })
+      .catch(err => {
+        this.toastService.error('Error dando de baja al User: ' + err);
+      });
+  }
+
+  setUserToDelete(i: number) {
+    this.indexToDelete = i;
   }
 }

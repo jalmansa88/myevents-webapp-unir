@@ -2,13 +2,18 @@ import { Injectable } from '@angular/core';
 import { AngularFirestore } from 'angularfire2/firestore';
 import { map } from 'rxjs/operators';
 
+import { LoginService } from './login.service';
 import { UserService } from './user.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class EventsService {
-  constructor(private db: AngularFirestore, private userService: UserService) {}
+  constructor(
+    private db: AngularFirestore,
+    private userService: UserService,
+    private loginService: LoginService
+  ) {}
 
   getAll() {
     return this.db
@@ -64,6 +69,7 @@ export class EventsService {
 
   findByUserUid(user_uid: string) {
     const events: any[] = [];
+    const eventsRole: Map<string, number> = new Map();
 
     return new Promise((resolve, reject) => {
       this.db
@@ -79,7 +85,10 @@ export class EventsService {
               .then((eventSnap: any) => {
                 const event = eventSnap.data();
                 event.uid = eventSnap.id;
+                event.role = attendeeSnapshot.data().role;
                 events.push(event);
+
+                eventsRole.set(event.uid, event.role);
               })
               .catch(err => {
                 reject(err);
@@ -89,11 +98,13 @@ export class EventsService {
         .catch(err => {
           reject(err);
         });
+      this.loginService.user.eventRolesMap = eventsRole;
+
       resolve(events);
     });
   }
 
-  addAttendeeToEvent(user_uid: string, event_uid: string) {
+  addAttendeeToEvent(user_uid: string, event_uid: string, role: number) {
     return new Promise((resolve, reject) => {
       this.userService
         .findByUid(user_uid)
@@ -116,7 +127,8 @@ export class EventsService {
         .then((event: any) => {
           this.db.collection('attendees').add({
             user_uid: user_uid,
-            event_uid: event_uid
+            event_uid: event_uid,
+            role: role
           });
           const e = event.data();
           e.uid = event.id;

@@ -15,7 +15,7 @@
             <td>{{event.description}}</td>
             <td class="input-group">
                 <input value="{{token}}" type="text" readonly>
-                <select [ngModel]="event.tokenrole">
+                <select [(ngModel)]="event.tokenrole">
                     <option *ngFor="let role of roles" [ngValue]="role.level">
                         {{role.name}} - {{role.level}}
                     </option>

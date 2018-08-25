@@ -1,17 +1,17 @@
 <h1 class="text-center text-primary"><strong>Service Provider Dashboard</strong></h1>
-<table class="table">
+<table class="table table-bordered">
     <thead>
-        <tr>
-            <th scope="col">Event Name</th>
-            <th scope="col">Event Description</th>
-            <th scope="col">Registration AdminEvent Token</th>
+        <tr class="d-flex">
+            <th class="col-3">Event Name</th>
+            <th class="col-6">Event Description</th>
+            <th class="col-3">New AdminEvent Token</th>
         </tr>
     </thead>
     <tbody>
-        <tr *ngFor="let event of events">
-            <td><input [ngClass]="{'col-sm mw-100': true, 'border-0': !event.isNew}" [(ngModel)]="event.name" [value]="event.name" [readonly]="!event.isNew"></td>
-            <td><input [ngClass]="{'col-sm mw-100': true, 'border-0': !event.isNew}" [(ngModel)]="event.description" [value]="event.description" [readonly]="!event.isNew"></td>
-            <td class="input-group" *ngIf="!event.isNew">
+        <tr *ngFor="let event of events" class="d-flex">
+            <td class="col-3 input-group"><input [ngClass]="{'col mw-100': true, 'border-0': !event.isNew}" [(ngModel)]="event.name" [value]="event.name" [readonly]="!event.isNew"></td>
+            <td class="col-6 input-group"><input [ngClass]="{'col mw-100': true, 'border-0': !event.isNew}" [(ngModel)]="event.description" [value]="event.description" [readonly]="!event.isNew"></td>
+            <td class="col-3 btn-group" *ngIf="!event.isNew">
                 <input value="{{event.tokenvalue}}" type="text" readonly>
                 <button (click)="generateToken(event)" class="btn btn-outline-primary">New Token</button>
                 <div class="p-1">
@@ -19,8 +19,23 @@
                     />
                 </div>
             </td>
-            <td *ngIf="event.isNew"><button (click)="saveEvent(event)" class="btn btn-success">Save</button></td>
+            <td *ngIf="event.isNew">
+                <div class="btn btn-group">
+                    <button (click)="saveEvent(event)" class="btn btn-outline-success">Save</button>
+                    <button (click)="cancel(event)" class="btn btn-outline-secondary">Cancel</button>
+                </div>
+            </td>
         </tr>
     </tbody>
-    <button (click)="newEvent()" type="button" class="btn btn-outline-dark">New Event</button>
 </table>
+<div class="row justify-content-around">
+    <div class="col">
+        <button (click)="newEvent()" type="button" class="btn btn-outline-dark">New Event</button>
+    </div>
+    <div class="col-auto">
+        <div class="btn btn-group">
+            <input value="{{sptoken}}" type="text" readonly>
+            <button (click)="generateSPToken()" class="btn btn-outline-info">Service Provider Token</button>
+        </div>
+    </div>
+</div>

@@ -32,6 +32,7 @@ import { RegistrationService } from './services/registration.service';
 import { RoleRouterService } from './services/role-router.service';
 import { TokenService } from './services/token.service';
 import { UserService } from './services/user.service';
+import { DownloadService } from './download.service';
 
 @NgModule({
   declarations: [
@@ -69,10 +70,11 @@ import { UserService } from './services/user.service';
     TokenService,
     LoginService,
     EventsService,
+    DownloadService,
     RoleRouterService,
     RegistrationService,
     ImageUploaderService
   ],
   bootstrap: [AppComponent]
 })
-export class AppModule {}
+export class AppModule { }

@@ -1,7 +1,4 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <a class="navbar-brand" href="#">
-        <span>MyEvents APP</span>
-    </a>
     <!-- <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button> -->
@@ -9,15 +6,26 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item" routerLinkActive="active">
-                <a class="nav-link" [routerLink]="['home']">Home</a>
+                <a class="nav-link" [routerLink]="['home']"><i class="fas fa-home"></i> Home</a>
             </li>
             <li class="nav-item" routerLinkActive="active">
-                <a class="nav-link" [routerLink]="['about']">About</a>
+                <a class="nav-link" [routerLink]="['about']"><i class="fas fa-info-circle"></i> About</a>
             </li>
         </ul>
-        <div class="nav-item mr-3">
-            <span *ngIf="loginService.user" class="text-white">[{{loginService.user.role | role | uppercase}}] Hola, {{loginService.user.firstname}}</span>
+
+        <div class="mx-auto">
+            <a class="navbar-brand text-info">
+                <span>MyEvents APP</span>
+            </a>
         </div>
-        <button (click)="logout()" *ngIf="loginService.user" type="button" class="btn btn-outline-primary btn-sm">Logout</button>
+
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item mr-3">
+                <a *ngIf="loginService.user" class="nav-link"><strong>Hola, {{loginService.user.firstname | uppercase}}</strong></a>
+            </li>
+            <li class="nav-item mr-3">
+                <button (click)="logout()" *ngIf="loginService.user" type="button" class="btn btn-outline-info">Logout</button>
+            </li>
+        </ul>
     </div>
 </nav>
