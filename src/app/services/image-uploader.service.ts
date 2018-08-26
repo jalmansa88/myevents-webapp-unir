@@ -11,16 +11,17 @@ import { FileItem } from '../models/file-items';
 })
 export class ImageUploaderService {
   private CARPETA_IMAGENES = 'img';
+  readonly imagenesCollection = this.db.collection(`/${this.CARPETA_IMAGENES}`);
 
   constructor(
     private db: AngularFirestore,
     private toastService: ToastrService
   ) {}
 
+  readonly storageRef = firebase.storage().ref();
+
   uploadToFirebase(imagenes: FileItem[], event_uid: string) {
     console.log(imagenes);
-
-    const storageRef = firebase.storage().ref();
 
     for (const image of imagenes) {
       image.estaSubiendo = true;
@@ -29,7 +30,7 @@ export class ImageUploaderService {
         continue;
       }
 
-      const refImagen = storageRef.child(
+      const refImagen = this.storageRef.child(
         `${this.CARPETA_IMAGENES}/${image.nombreArchivo}`
       );
       const uploadTask: firebase.storage.UploadTask = refImagen.put(
@@ -66,7 +67,21 @@ export class ImageUploaderService {
     }
   }
 
+  async deleteImage(image: Imagen) {
+    const refImagen = this.storageRef.child(
+      `${this.CARPETA_IMAGENES}/${image.nombre}`
+    );
+
+    await refImagen.delete();
+
+    const imageFiltered = await this.imagenesCollection.ref
+      .where('url', '==', image.url)
+      .get();
+
+    return await this.imagenesCollection.doc(imageFiltered.docs[0].id).delete();
+  }
+
   private guardarImagen(imagen: Imagen) {
-    this.db.collection(`/${this.CARPETA_IMAGENES}`).add(imagen);
+    this.imagenesCollection.add(imagen);
   }
 }

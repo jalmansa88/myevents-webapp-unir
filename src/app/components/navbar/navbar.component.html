@@ -5,8 +5,11 @@
 
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
-            <li class="nav-item" routerLinkActive="active">
+            <li class="nav-item" routerLinkActive="active" *ngIf="!loginService.user">
                 <a class="nav-link" [routerLink]="['home']"><i class="fas fa-home"></i> Home</a>
+            </li>
+            <li class="nav-item" routerLinkActive="active" *ngIf="(loginService.user && !loginService.user.isSP)">
+                <a class="nav-link" [routerLink]="['events']"><i class="fas fa-images"></i> MyEvents</a>
             </li>
             <li class="nav-item" routerLinkActive="active">
                 <a class="nav-link" [routerLink]="['about']"><i class="fas fa-info-circle"></i> About</a>
