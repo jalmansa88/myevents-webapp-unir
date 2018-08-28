@@ -1,0 +1,6 @@
+[{
+    "origin": ["http://localhost:4200", "https://myevents-unir.firebaseapp.com"],
+    "responseHeader": ["Content-Type"],
+    "method": ["GET", "HEAD", "DELETE"],
+    "maxAgeSeconds": 3600
+}]

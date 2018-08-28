@@ -8,6 +8,9 @@
             </h1>
         </div>
     </div>
+    <div class="row">
+        <div><button (click)="downloadAsZip()" class="btn btn-info">Descargar Imágenes</button></div>
+    </div>
     <div *ngIf="(images | async)?.length == 0" class="row mt-3 justify-content-center">
         <div class="col-auto alert alert-info">
             <span>No hay imágenes en este evento!</span>
@@ -15,7 +18,7 @@
     </div>
     <div class="card-columns mt-3">
         <div *ngFor="let image of images | async">
-            <div *ngIf="!image.isVip || (image.isVip && role >= 2)" class="card" [ngClass]="{'border-success border-3': image.isVip}">
+            <div class="card" [ngClass]="{'border-success border-3': image.isVip}">
                 <img class="card-img-top" [src]="image.url">
                 <div class="card-body">
                     <h5 class="card-title">{{image.nombre}}</h5>

@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Query } from '@firebase/firestore-types';
 import { AngularFirestore } from 'angularfire2/firestore';
 import { ToastrService } from 'ngx-toastr';
 import { Observable } from 'rxjs';
 
-import { DownloadService } from '../../download.service';
 import { Imagen } from '../../interfaces/image.interface';
+import { DownloadService } from '../../services/download.service';
 import { EventsService } from '../../services/events.service';
 import { ImageUploaderService } from '../../services/image-uploader.service';
 import { LoginService } from '../../services/login.service';
@@ -36,27 +37,29 @@ export class PhotosComponent implements OnInit {
 
   readonly imgRef = this.afs.collection<Imagen>('img');
 
-  ngOnInit() {
+  async ngOnInit() {
     if (!this.loginService.user) {
       this.router.navigate(['home']);
     }
 
     this.event_uid = this.activatedRoute.snapshot.queryParams.eventuid;
-    // const event_uid = this.activatedRoute.snapshot.params['eventuid'];
+    this.event = await this.eventService.findByUid(this.event_uid);
 
-    this.eventService.findByUid(this.event_uid).then(result => {
-      this.event = result;
-    });
-
-    this.images = this.afs
-      .collection<Imagen>('img', ref =>
-        ref.where('event_uid', '==', this.event_uid)
-      )
-      .valueChanges();
-
-    const rolesMap = this.loginService.user.eventRolesMap;
-
+    const rolesMap = await this.loginService.user.eventRolesMap;
     rolesMap ? (this.role = rolesMap.get(this.event_uid)) : (this.role = 0);
+    this.event.role = this.role;
+
+    let query: Query = this.afs.collection<Imagen>('img').ref;
+    query = query.where('event_uid', '==', this.event.uid);
+
+    console.log(this.event);
+
+    if (this.event.role < 2) {
+      query = query.where('isVip', '==', false);
+    }
+    this.images = this.afs
+      .collection<Imagen>('img', ref => query)
+      .valueChanges();
   }
 
   toggleVip(imagen: Imagen) {
@@ -77,7 +80,7 @@ export class PhotosComponent implements OnInit {
   deleteImage(image: Imagen) {
     this.imageService
       .deleteImage(image)
-      .then(result => {
+      .then(() => {
         this.toastService.success('imagen eliminada correctamente');
       })
       .catch(err => {
@@ -85,5 +88,9 @@ export class PhotosComponent implements OnInit {
 
         this.toastService.error('ha habido un error');
       });
+  }
+
+  downloadAsZip() {
+    this.downloader.downloadImagesAsZip(this.event);
   }
 }

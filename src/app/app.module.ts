@@ -25,6 +25,7 @@ import { ServiceProviderComponent } from './components/userPanels/service-provid
 import { UsersEventsComponent } from './components/users-events-list/users-events-list.component';
 import { NgDropFilesDirective } from './directives/ng-drop-files.directive';
 import { RolePipe } from './pipes/role.pipe';
+import { DownloadService } from './services/download.service';
 import { EventsService } from './services/events.service';
 import { ImageUploaderService } from './services/image-uploader.service';
 import { LoginService } from './services/login.service';
@@ -32,7 +33,6 @@ import { RegistrationService } from './services/registration.service';
 import { RoleRouterService } from './services/role-router.service';
 import { TokenService } from './services/token.service';
 import { UserService } from './services/user.service';
-import { DownloadService } from './download.service';
 
 @NgModule({
   declarations: [
@@ -77,4 +77,4 @@ import { DownloadService } from './download.service';
   ],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {}
