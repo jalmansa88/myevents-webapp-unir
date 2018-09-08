@@ -105,12 +105,15 @@
 </div>
 
 <div class="row mt-3 justify-content-center">
-    <div class="col-4-5">
+    <div class="col-4">
         <div *ngIf="!loginService.user" class="input-group">
             <div class="input-group-prepend">
                 <span class="input-group-text">Código de registro</span>
             </div>
-            <input type="text" placeholder="P.Ejemplo: E5G3D8" class="form-control" name="inputtoken" [(ngModel)]="token" #inputtoken="ngModel" required/>
+            <input type="text" placeholder="P.Ejemplo: E5G3D8" class="form-control" [ngClass]="{ 'is-invalid': !token }" [(ngModel)]="token" />
+            <div class="invalid-feedback ">
+                <div>Debes introducir un Token de Registro</div>
+            </div>
         </div>
     </div>
 </div>

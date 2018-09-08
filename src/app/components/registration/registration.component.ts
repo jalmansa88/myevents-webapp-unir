@@ -42,6 +42,7 @@ export class RegistrationComponent implements OnInit {
       this.toastService.error(
         'Introduzca un Código de registro válido. Consulte al Administrador del evento'
       );
+      return;
     }
 
     this.regService
@@ -61,6 +62,12 @@ export class RegistrationComponent implements OnInit {
   }
 
   registerWithEmail() {
+    if (!this.token) {
+      this.toastService.error(
+        'Introduzca un Código de registro válido. Consulte al Administrador del evento'
+      );
+      return;
+    }
     this.loading = true;
     this.regService
       .withEmail(this.token, this.user)
